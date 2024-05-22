@@ -1,6 +1,136 @@
-import * as React from 'react'
-import { useTable, usePagination } from 'react-table'
-import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa'
+// import {
+//   Table,
+//   Thead,
+//   Tbody,
+//   Tr,
+//   Th,
+//   Td,
+//   Flex,
+//   Text,
+//   IconButton,
+//   Select,
+//   Stack
+// } from '@chakra-ui/react'
+// import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa'
+// import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+
+// import NoData from '@renderer/components/no_data'
+// import useThemeMode from '@renderer/hooks/useThemeMode'
+
+// export function AdvanceTable({ columns, data, meta, pagination, setPagination }: any) {
+//   const { mode30 } = useThemeMode()
+//   const table = useReactTable({
+//     data: data ? data : [],
+//     columns,
+//     rowCount: meta.totalPage,
+//     state: {
+//       pagination
+//     },
+//     onPaginationChange: setPagination,
+//     getCoreRowModel: getCoreRowModel(),
+//     manualPagination: true
+//   })
+
+//   return (
+//     <Flex flex={1} mb={2} p={4} direction={'column'}>
+//       <Flex borderTop={'1px solid'} borderColor={mode30} maxH={'65vh'} overflowY={'scroll'}>
+//         <Table>
+//           <Thead bg={'gray'}>
+//             {table.getHeaderGroups().map((headerGroup: any) => (
+//               <Tr key={headerGroup.id}>
+//                 {headerGroup.headers.map((header: any) => (
+//                   <Th p={2.5} key={header.id} fontSize={'xs'} border={'1px solid'}>
+//                     {flexRender(header.column.columnDef.header, header.getContext())}
+//                   </Th>
+//                 ))}
+//               </Tr>
+//             ))}
+//           </Thead>
+//           <Tbody>
+//             {table.getRowModel().rows.map((row) => {
+//               return (
+//                 <Tr key={row.id}>
+//                   {row.getVisibleCells().map((cell) => {
+//                     return (
+//                       <Td key={cell.id} py={2} px={3} fontSize={'sm'} border={'1px solid'}>
+//                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
+//                       </Td>
+//                     )
+//                   })}
+//                 </Tr>
+//               )
+//             })}
+//           </Tbody>
+//         </Table>
+//       </Flex>
+
+//       {/* No data found */}
+//       {data?.length === 0 && (
+//         <Flex minH={'40vh'} justify={'center'} border={'1px solid'} borderColor={mode30}>
+//           <NoData />
+//         </Flex>
+//       )}
+
+//       {/* Pagination */}
+//       <Flex py={6} justify={'space-between'} align={'center'}>
+//         <Stack direction={'row'} spacing={2}>
+//           <IconButton
+//             aria-label={''}
+//             icon={<FaAngleDoubleLeft />}
+//             size={'sm'}
+//             onClick={() => table.firstPage()}
+//             isDisabled={!table.getCanPreviousPage()}
+//           />
+//           <IconButton
+//             aria-label={''}
+//             icon={<FaAngleLeft />}
+//             size={'sm'}
+//             onClick={() => table.previousPage()}
+//             isDisabled={!table.getCanPreviousPage()}
+//           />
+//           <IconButton
+//             aria-label={''}
+//             icon={<FaAngleRight />}
+//             size={'sm'}
+//             onClick={() => table.nextPage()}
+//             isDisabled={!table.getCanNextPage()}
+//           />
+//           <IconButton
+//             aria-label={''}
+//             icon={<FaAngleDoubleRight />}
+//             size={'sm'}
+//             onClick={() => table.lastPage()}
+//             isDisabled={!table.getCanNextPage()}
+//           />
+//         </Stack>
+
+//         <Stack direction={'row'} spacing={2} align={'center'}>
+//           <Text fontSize={'xs'} fontWeight={600}>
+//             Page {table.getState().pagination.pageIndex + 1} of{' '}
+//             {table.getPageCount().toLocaleString()}
+//           </Text>
+//           <Flex>
+//             <Select
+//               size={'sm'}
+//               value={table.getState().pagination.pageSize}
+//               onChange={(e) => {
+//                 e.preventDefault()
+//                 table.setPageSize(Number(e.target.value))
+//               }}
+//             >
+//               {[10, 20, 30, 40, 50].map((pageSize) => (
+//                 <option key={pageSize} value={pageSize}>
+//                   Show {pageSize}
+//                 </option>
+//               ))}
+//             </Select>
+//           </Flex>
+//         </Stack>
+//       </Flex>
+//     </Flex>
+//   )
+// }
+
 import {
   Table,
   Thead,
@@ -14,82 +144,86 @@ import {
   Select,
   Stack
 } from '@chakra-ui/react'
-
+import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa'
+import { PaginationState, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import useThemeMode from '@renderer/hooks/useThemeMode'
 import NoData from '@renderer/components/no_data'
 
-export function AdvanceTable(props: any) {
-  const { mode30 } = useThemeMode()
-  const { setPageIndex, setPageSize, useControlledState } = props
-
-  const data = React.useMemo(() => props?.data, [props?.data])
-  const meta = React.useMemo(() => props?.meta, [props?.meta])
-  const columns = React.useMemo(() => props?.columns, [props?.columns])
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    state: { pageIndex, pageSize },
-    setQueryPageIndex,
-    setQueryPageSize
-  } = useTable(
-    {
-      columns,
-      data: data ? data : [],
-      useControlledState,
-      manualPagination: true,
-      pageCount: meta?.pageCount,
-      autoResetPage: false,
-      setQueryPageIndex: setPageIndex,
-      setQueryPageSize: setPageSize
+export function AdvanceTable({
+  columns,
+  data,
+  meta,
+  pagination,
+  setPagination
+}: {
+  columns: any[]
+  data: any[]
+  meta: any
+  pagination: PaginationState
+  setPagination: any
+}) {
+  const table = useReactTable({
+    data: data ? data : [],
+    columns,
+    rowCount: meta.totalPage,
+    state: {
+      pagination
     },
-    usePagination
-  )
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true
+  })
+
+  const { mode30 } = useThemeMode()
+  console.log(mode30)
 
   return (
-    <Flex flex={1} direction={'column'}>
-      <Flex>
-        <Table {...getTableProps()}>
-          <Thead bg="brand.500">
-            {headerGroups.map((headerGroup, i) => (
-              <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => (
+    <Flex flex={1} mb={2} py={4} px={0} direction={'column'}>
+      <Flex
+        borderTop={'1px solid'}
+        borderColor={mode30}
+        maxH={'65vh'}
+        // overflowY={"scroll"}
+      >
+        <Table>
+          <Thead bg={mode30}>
+            {table.getHeaderGroups().map((headerGroup, index) => (
+              <Tr key={headerGroup.id + Math.random().toString(36).substr(index, 9)}>
+                {headerGroup.headers.map((header, index) => (
                   <Th
-                    key={i}
                     p={2.5}
-                    color="brand.50"
-                    border="1px solid"
+                    key={header.id + Math.random().toString(36).substr(index, 9)}
+                    colSpan={header.colSpan}
+                    fontSize={'xs'}
+                    // color={mode70}
+                    // textTransform={'none'}
+                    border={'1px solid'}
                     borderColor={mode30}
-                    {...column.getHeaderProps()}
+                    textAlign={'center'}
                   >
-                    {column.render('Header')}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </Th>
                 ))}
               </Tr>
             ))}
           </Thead>
-          <Tbody {...getTableBodyProps()}>
-            {page?.map((row: any, i) => {
-              prepareRow(row)
+          <Tbody>
+            {table.getRowModel().rows.map((row, index: number) => {
               return (
-                <Tr key={i} {...row.getRowProps()}>
-                  {row.cells.map((cell: any, i) => {
+                <Tr key={row.id + Math.random().toString(36).substr(index, 9)}>
+                  {row.getVisibleCells().map((cell) => {
                     return (
                       <Td
-                        key={i}
-                        p={2.5}
+                        key={cell.id + Math.random().toString(36).substr(index, 9)}
+                        py={2}
+                        px={3}
+                        fontSize={'sm'}
                         border={'1px solid'}
                         borderColor={mode30}
-                        {...cell.getCellProps()}
                       >
-                        {cell.render('Cell')}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     )
                   })}
@@ -102,7 +236,7 @@ export function AdvanceTable(props: any) {
 
       {/* No data found */}
       {data?.length === 0 && (
-        <Flex minH={'60vh'} justify={'center'} border={'1px solid'} borderColor={mode30}>
+        <Flex minH={'40vh'} justify={'center'} border={'1px solid'} borderColor={mode30}>
           <NoData />
         </Flex>
       )}
@@ -114,43 +248,44 @@ export function AdvanceTable(props: any) {
             aria-label={''}
             icon={<FaAngleDoubleLeft />}
             size={'sm'}
-            onClick={() => setQueryPageIndex(0)}
-            isDisabled={!canPreviousPage}
+            onClick={() => table.firstPage()}
+            isDisabled={!table.getCanPreviousPage()}
           />
           <IconButton
             aria-label={''}
             icon={<FaAngleLeft />}
             size={'sm'}
-            onClick={() => setQueryPageIndex(pageIndex > 0 ? pageIndex - 1 : 1)}
-            isDisabled={!canPreviousPage}
+            onClick={() => table.previousPage()}
+            isDisabled={!table.getCanPreviousPage()}
           />
           <IconButton
             aria-label={''}
             icon={<FaAngleRight />}
             size={'sm'}
-            onClick={() => setQueryPageIndex(pageIndex < pageCount ? pageIndex + 1 : pageCount)}
-            isDisabled={!canNextPage}
+            onClick={() => table.nextPage()}
+            isDisabled={!table.getCanNextPage()}
           />
           <IconButton
             aria-label={''}
             icon={<FaAngleDoubleRight />}
             size={'sm'}
-            onClick={() => setQueryPageIndex(pageCount - 1)}
-            isDisabled={!canNextPage}
+            onClick={() => table.lastPage()}
+            isDisabled={!table.getCanNextPage()}
           />
         </Stack>
 
         <Stack direction={'row'} spacing={2} align={'center'}>
           <Text fontSize={'xs'} fontWeight={600}>
-            Page {pageIndex + 1} of {pageOptions?.length}
+            Page {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount().toLocaleString()}
           </Text>
           <Flex>
             <Select
               size={'sm'}
-              value={pageSize}
+              value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 e.preventDefault()
-                setQueryPageSize(Number(e.target.value))
+                table.setPageSize(Number(e.target.value))
               }}
             >
               {[10, 20, 30, 40, 50].map((pageSize) => (

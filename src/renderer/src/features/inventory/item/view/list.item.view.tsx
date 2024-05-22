@@ -13,7 +13,7 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  Tag,
+  // Tag,
   Text
 } from '@chakra-ui/react'
 import { RiAddLine, RiArrowRightSLine, RiBox3Line, RiFileExcel2Line } from 'react-icons/ri'
@@ -26,78 +26,103 @@ import { AdvanceTable } from '@renderer/components/table/advance_table'
 import { Search } from '@renderer/components/search'
 import { parseCurrency } from '@renderer/utils/parse_currency'
 import { RowOptions } from '@renderer/components/row_options'
-import { getInnerWidth } from '@renderer/utils/inner_width'
+// import { getInnerWidth } from '@renderer/utils/inner_width'
 
 export default function ListItemView(props: any) {
   const { mode20, modeBrand } = useThemeMode()
 
   const columns = [
     {
-      Header: 'Item Name',
-      accessor: (row: itemType) => <Text fontSize="sm">{row?.item_name || '-'}</Text>
+      header: 'Item Name',
+      accessorKey: 'item_name',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
     },
     {
-      Header: 'Category',
-      accessor: (row: itemType) => <Text fontSize="sm">{row?.item_category || '-'}</Text>
+      header: 'Category',
+      accessorKey: 'item_category',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
     },
     {
-      Header: 'Selling Price',
-      accessor: (row: itemType) => (
-        <Text fontSize="sm">{parseCurrency(row?.selling_price) || '-'}</Text>
+      header: 'Selling Price',
+      accessorKey: 'selling_price',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? parseCurrency(row.getValue()) : '-'}
+        </Text>
       )
     },
 
     {
-      Header: 'GST Rate',
-      accessor: (row: itemType) => (
-        <Text fontSize="sm">{row?.gst_rate ? `${row?.gst_rate}%` : '-'}</Text>
+      header: 'GST Rate',
+      accessorKey: 'gst_rate',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? `${row.getValue()}%` : '-'}
+        </Text>
       )
     },
     {
-      Header: 'Closing Stock',
-      accessor: (row: itemType) => {
-        return row?.closing_stock < 0 ? (
-          <Text color={'red.500'} fontSize="sm">
-            {row?.closing_stock || '-'}
-          </Text>
-        ) : (
-          <Text color={'green.500'} fontSize="sm">
-            {row?.closing_stock || '-'}
-          </Text>
-        )
-      }
+      header: 'Closing Stock',
+      accessorKey: 'closing_stock',
+      cell: (row: any) => (
+        <Text textAlign={'center'}>
+          {row.getValue() ? (
+            row.getValue() < 0 ? (
+              <Text color={'red.500'} fontSize="sm">
+                {row.getValue()}
+              </Text>
+            ) : (
+              <Text color={'green.500'} fontSize="sm">
+                {row.getValue()}
+              </Text>
+            )
+          ) : (
+            <Text color={'green.500'} fontSize="sm">
+              {'-'}
+            </Text>
+          )}
+        </Text>
+      )
     },
+    // {
+    //   Header: 'Stock Type',
+    //   accessorKey: 'Stock Type',
+    //   accessor: (row: itemType) => {
+    //     return (
+    //       <>
+    //         {row?.batching_enabled && (
+    //           <Tag colorScheme={'blue'}>
+    //             <Text fontSize="sm">Batching</Text>
+    //           </Tag>
+    //         )}
+    //         {row?.serialization_enabled && (
+    //           <Tag colorScheme={'purple'}>
+    //             <Text fontSize="sm">Serialisation</Text>
+    //           </Tag>
+    //         )}
+    //         {!row?.serialization_enabled && !row?.batching_enabled && (
+    //           <Tag colorScheme={'gray'}>
+    //             <Text fontSize="sm">Default</Text>
+    //           </Tag>
+    //         )}
+    //       </>
+    //     )
+    //   }
+    // },
     {
-      Header: 'Stock Type',
-      accessor: (row: itemType) => {
-        return (
-          <>
-            {row?.batching_enabled && (
-              <Tag colorScheme={'blue'}>
-                <Text fontSize="sm">Batching</Text>
-              </Tag>
-            )}
-            {row?.serialization_enabled && (
-              <Tag colorScheme={'purple'}>
-                <Text fontSize="sm">Serialisation</Text>
-              </Tag>
-            )}
-            {!row?.serialization_enabled && !row?.batching_enabled && (
-              <Tag colorScheme={'gray'}>
-                <Text fontSize="sm">Default</Text>
-              </Tag>
-            )}
-          </>
-        )
-      },
-      width: getInnerWidth(15)
-    },
-    {
-      id: 'options',
-      accessor: (row: itemType) => (
-        <RowOptions type={'items'} row={row} onDelete={props.handleDelete} />
-      ),
-      width: getInnerWidth(10)
+      header: 'options',
+      accessorKey: 'id',
+      cell: (row: any) => (
+        <RowOptions type={'items'} row={{ id: row.getValue() }} onDelete={props.handleDelete} />
+      )
     }
   ]
 
@@ -189,10 +214,9 @@ export default function ListItemView(props: any) {
       <AdvanceTable
         columns={columns || []}
         data={props.items?.data || []}
-        meta={props.items?.meta}
-        setPageIndex={props.setPageIndex}
-        setPageSize={props.setPageSize}
-        useControlledState={props.useControlledState}
+        meta={{ totalPages: 0 }}
+        pagination={props.pagination}
+        setPagination={props.setPagination}
       />
     </AppLayout>
   )

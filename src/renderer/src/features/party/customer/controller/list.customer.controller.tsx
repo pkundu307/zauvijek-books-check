@@ -1,21 +1,55 @@
 import * as React from 'react'
 import ListCustomerView from '../view/list.customer.view'
+import { PaginationState } from '@tanstack/react-table'
+import { searchByProperty } from '@renderer/utils/serach_by_propertyname'
 
 export default function ListCustomerController(props: any) {
-  const [customers, setCustomers] = React.useState({
-    data: [],
-    meta: {}
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL STATES START
+   *
+   */
+  const [data, setData] = React.useState({
+    data: [...props.data],
+    meta: { totalPage: props.data.length }
+  })
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
   })
   const [isSearching, setSearching] = React.useState(false)
 
+  /**
+   *
+   *  LOCAL STATES END
+   * ----------------------------------------------------------------------
+   */
+
+  const updateData = React.useMemo(
+    () =>
+      data?.data.slice(
+        pagination.pageIndex * pagination.pageSize,
+        pagination.pageIndex * pagination.pageSize + pagination.pageSize
+      ) || [],
+    [data, pagination]
+  )
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL EFFECTS START
+   *
+   */
   React.useEffect(() => {
     if (props.data && isSearching === false) {
-      setCustomers(props.data)
+      setData({
+        data: [...props.data],
+        meta: { totalPage: props.data.length }
+      })
     } else {
-      const result = { data: props.searchData, meta: {} }
-      setCustomers(result)
+      const updateData = searchByProperty(props?.data, 'party_name', props.search)
+      const result = { data: updateData, meta: { totalPage: updateData.length } }
+      setData(result)
     }
-  }, [props.data, isSearching, props.searchData])
+  }, [props.data, isSearching, props.search])
 
   React.useEffect(() => {
     if (props.search === '') {
@@ -25,42 +59,27 @@ export default function ListCustomerController(props: any) {
     }
   }, [props.search])
 
-  const useControlledState = (state: any) => {
-    return React.useMemo(
-      () => ({
-        ...state,
-        pageIndex: props.page,
-        pageSize: props.limit
-      }),
-      [state]
-    )
-  }
+  /**
+   *
+   *  LOCAL EFFECTS END
+   * ----------------------------------------------------------------------
+   */
 
-  const setPageIndex = React.useCallback((value: any) => {
-    props.setPage(value)
-  }, [])
-
-  const setPageSize = React.useCallback((value: any) => {
-    props.setLimit(value)
-  }, [])
-
-  function searchFilter(value: string) {
-    props.setSearch(value)
-  }
-
-  function handleDelete(value: string) {
-    props.handleDelete(value)
-  }
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
 
   return (
     <ListCustomerView
-      customers={customers}
+      data={updateData}
+      meta={data?.meta || {}}
       search={props.search}
-      searchFilter={searchFilter}
-      setPageSize={setPageSize}
-      setPageIndex={setPageIndex}
-      useControlledState={useControlledState}
-      handleDelete={handleDelete}
+      searchFilter={props.searchFilter}
+      handleDelete={props.handleDelete}
+      pagination={pagination}
+      setPagination={setPagination}
     />
   )
 }

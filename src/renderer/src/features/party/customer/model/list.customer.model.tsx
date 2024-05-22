@@ -1,54 +1,74 @@
 import React from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@chakra-ui/react'
-import { useDebounce } from 'use-debounce'
 
 import Loading from '@renderer/components/loading'
-import { useAuthentication } from '@renderer/hooks/useAuthentication'
-import { deleteParty, getParties, searchParties } from '@renderer/services/party'
+import { deleteParty, getParties } from '@renderer/services/party'
 import ListCustomerController from '../controller/list.customer.controller'
 
 export default function ListCustomerModel() {
+  /**
+   * ----------------------------------------------------------------------
+   *  LIBRARY HOOKS START
+   *
+   */
+
   const toast = useToast()
   const queryClient = useQueryClient()
-  const { user } = useAuthentication()
 
-  const [page, setPage] = React.useState(0)
-  const [limit, setLimit] = React.useState(10)
+  /**
+   *
+   *  LIBRARY HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL STATES START
+   *
+   */
+
   const [search, setSearch] = React.useState('')
 
+  /**
+   *
+   *  LOCAL STATES END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  QUERY START
+   *
+   */
+
   const { isLoading, data } = useQuery({
-    queryKey: ['getParties', user?.business_id, 'customer', page + 1, limit],
+    queryKey: ['getParties', '1111', 'customer'],
     queryFn: () =>
       getParties({
-        business_id: user?.business_id,
-        party_type: 'customer',
-        page: page + 1,
-        take: limit
+        business_id: '1111'
       }),
     refetchOnWindowFocus: false,
     retry: 1
   })
 
-  // Search
-  const debouncedFilter = useDebounce(search, 500)
-  const { data: searchData } = useQuery({
-    queryKey: ['searchCustomers', user?.business_id, 'customer', debouncedFilter[0]],
-    queryFn: () =>
-      searchParties({
-        business_id: user?.business_id,
-        party_type: 'customer',
-        party_name: debouncedFilter[0]
-      }),
-    enabled: !!search
-  })
+  /**
+   *
+   *  QUERY END
+   * ----------------------------------------------------------------------
+   */
 
-  // Delete
+  /**
+   * ----------------------------------------------------------------------
+   *  MUTATION START
+   *
+   */
+
   const { mutate } = useMutation({
     mutationFn: deleteParty,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['getParties', user?.business_id, 'customer', 1, 10]
+        queryKey: ['getParties', '111', 'customer']
       })
       toast({
         position: 'top',
@@ -59,10 +79,37 @@ export default function ListCustomerModel() {
     }
   })
 
+  /**
+   *
+   *  MUTATION END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  HANDLER FUNCTIONS START
+   *
+   */
+
   function handleDelete(value: string) {
-    console.log('Delete', value)
-    mutate({ id: value })
+    mutate(value)
   }
+
+  function searchFilter(value: string) {
+    setSearch(value)
+  }
+
+  /**
+   *
+   *  HANDLER FUNCTIONS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
 
   if (isLoading) {
     return <Loading />
@@ -71,13 +118,9 @@ export default function ListCustomerModel() {
   return (
     <ListCustomerController
       data={data || []}
-      page={page}
-      limit={limit}
-      setPage={setPage}
-      setLimit={setLimit}
       search={search}
       setSearch={setSearch}
-      searchData={searchData}
+      searchFilter={searchFilter}
       handleDelete={handleDelete}
     />
   )

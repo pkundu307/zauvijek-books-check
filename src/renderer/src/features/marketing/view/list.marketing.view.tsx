@@ -1,55 +1,42 @@
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import 'react-pdf/dist/esm/Page/TextLayer.css'
+// import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+// import 'react-pdf/dist/esm/Page/TextLayer.css'
 
-import React from 'react'
-import { Button, Flex } from '@chakra-ui/react'
-import { Document, Page, pdfjs } from 'react-pdf'
+// import React from 'react'
+// import { Button, Flex } from '@chakra-ui/react'
+// import { Document, Page, pdfjs } from 'react-pdf'
 
-const url = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
-pdfjs.GlobalWorkerOptions.workerSrc = url
+// const url = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
+// pdfjs.GlobalWorkerOptions.workerSrc = url
 
 export default function SingleSaleInvoiceView() {
-  const pdfBuffer = window.ZauvijekAPI.services.PDF
+  // const pdfBuffer = window.ZauvijekAPI.services.PDF
 
-  const [regularPdfFile, setRegularPdfFile] = React.useState<any>()
-  const [numPages, setNumPages] = React.useState(null)
+  // const [regularPdfFile, setRegularPdfFile] = React.useState<any>()
+  // const [numPages, setNumPages] = React.useState(null)
 
-  React.useEffect(() => {
-    async function getPDF() {
-      const buffer = await pdfBuffer.generatePDF({})
-      setRegularPdfFile(buffer)
-    }
-    getPDF()
-  }, [])
+  // React.useEffect(() => {
+  //   async function getPDF() {
+  //     const buffer = await pdfBuffer.generatePDF()
+  //     setRegularPdfFile(buffer)
+  //   }
+  //   getPDF()
+  // }, [])
 
-  function onDocumentLoadSuccess({ numPages }: any) {
-    setNumPages(numPages)
-  }
+  // function onDocumentLoadSuccess({ numPages }: any) {
+  //   setNumPages(numPages)
+  // }
 
-  async function handleRegularDownload() {
-    // Setting various property values
-    const alink = document.createElement('a')
-    alink.href = regularPdfFile
-    alink.download = `${'download'}.pdf`
-    alink.click()
-  }
+  // async function handleRegularDownload() {
+  //   // Setting various property values
+  //   const alink = document.createElement('a')
+  //   alink.href = regularPdfFile
+  //   alink.download = `${'download'}.pdf`
+  //   alink.click()
+  // }
 
   // console.log('PDF', pdfBuffer.generatePDF())
 
-  return (
-    <Flex>
-      <Button onClick={() => handleRegularDownload()}>Print</Button>
-      <Document
-        file={regularPdfFile && regularPdfFile}
-        onLoadSuccess={onDocumentLoadSuccess}
-        noData={''}
-      >
-        {Array.from(new Array(numPages), (index: any) => (
-          <Page key={`page_${index + 1}`} scale={1.3} pageNumber={index + 1} />
-        ))}
-      </Document>
-    </Flex>
-  )
+  return <></>;
 }
 
 // import React from 'react'

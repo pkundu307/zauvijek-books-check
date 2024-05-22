@@ -1,23 +1,57 @@
-import * as React from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ListBankCashView from '../view/list.bank_cash.view'
+import { PaginationState } from '@tanstack/react-table'
+import { searchByProperty } from '@renderer/utils/serach_by_propertyname'
 
 export default function ListBankCashController(props: any) {
-  const [bankCashs, setBankCashs] = React.useState({
-    data: [],
-    meta: {}
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL STATES START
+   *
+   */
+  const [data, setData] = useState({
+    data: [...props.data],
+    meta: { totalPage: props.data.length }
   })
-  const [isSearching, setSearching] = React.useState(false)
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
+  const [isSearching, setSearching] = useState(false)
 
-  React.useEffect(() => {
+  /**
+   *
+   *  LOCAL STATES END
+   * ----------------------------------------------------------------------
+   */
+
+  const updateData = useMemo(
+    () =>
+      data?.data.slice(
+        pagination.pageIndex * pagination.pageSize,
+        pagination.pageIndex * pagination.pageSize + pagination.pageSize
+      ) || [],
+    [data, pagination]
+  )
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL EFFECTS START
+   *
+   */
+  useEffect(() => {
     if (props.data && isSearching === false) {
-      setBankCashs(props.data)
+      setData({
+        data: [...props.data],
+        meta: { totalPage: props.data.length }
+      })
     } else {
-      const result = { data: props.searchData, meta: {} }
-      setBankCashs(result)
+      const updateData = searchByProperty(props?.data, 'party_name', props.search)
+      const result = { data: updateData, meta: { totalPage: updateData.length } }
+      setData(result)
     }
-  }, [props.data, isSearching, props.searchData])
+  }, [props.data, isSearching, props.search])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.search === '') {
       setSearching(false)
     } else {
@@ -25,37 +59,27 @@ export default function ListBankCashController(props: any) {
     }
   }, [props.search])
 
-  const useControlledState = (state: any) => {
-    return React.useMemo(
-      () => ({
-        ...state,
-        pageIndex: props.page,
-        pageSize: props.limit
-      }),
-      [state]
-    )
-  }
+  /**
+   *
+   *  LOCAL EFFECTS END
+   * ----------------------------------------------------------------------
+   */
 
-  const setPageIndex = React.useCallback((value: any) => {
-    props.setPage(value)
-  }, [])
-
-  const setPageSize = React.useCallback((value: any) => {
-    props.setLimit(value)
-  }, [])
-
-  function searchFilter(value: string) {
-    props.setSearch(value)
-  }
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
 
   return (
     <ListBankCashView
-      bankCashs={bankCashs}
+      data={updateData}
+      meta={data?.meta || {}}
       search={props.search}
-      searchFilter={searchFilter}
-      setPageSize={setPageSize}
-      setPageIndex={setPageIndex}
-      useControlledState={useControlledState}
+      searchFilter={props.searchFilter}
+      handleDelete={props.handleDelete}
+      pagination={pagination}
+      setPagination={setPagination}
     />
   )
 }

@@ -44,7 +44,7 @@ export default function SpreadsheetCustomerView(props: any) {
   }, [])
 
   function initSpreadsheet() {
-    const matrix: Matrix<CellBase> = createEmptyMatrix(100, 15)
+    const matrix: Matrix<CellBase> = createEmptyMatrix(1000, 15)
     setData(matrix)
   }
 

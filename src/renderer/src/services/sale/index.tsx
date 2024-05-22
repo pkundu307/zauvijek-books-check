@@ -1,16 +1,20 @@
 import axios from 'axios'
 import { API_URL } from '..'
 import { cookies } from '@renderer/utils/cookie'
+const services = window.ZauvijekAPI.services
 
 export async function getSales(props: any) {
   try {
-    const { business_id, sale_type, start_date, end_date, page, take } = props
-    const response = await axios.get(
-      `${API_URL}/sale?business_id=${business_id}&sale_type=${sale_type}&start_date=${start_date}&end_date=${end_date}&page=${page}&take=${take}`,
-      { headers: { Authorization: `Bearer ${cookies.get('access_token')}` } }
-    )
-    return response?.data
+    const { business_id, sale_type, startDate, endDate } = props
+    const response = await services.sale.getSales({
+      business_id,
+      start_date: startDate,
+      end_date: endDate,
+      sale_type
+    })
+    return response
   } catch (error: any) {
+    console.log(error)
     throw new Error(error.response.data.message)
   }
 }
@@ -80,12 +84,10 @@ export async function searchSales(props: any) {
   }
 }
 
-export async function getSaleById(props: any) {
+export async function getSaleById(id: string) {
   try {
-    const response = await axios.get(`${API_URL}/sale/${props.id}`, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.sale.getSaleById(id)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -93,10 +95,15 @@ export async function getSaleById(props: any) {
 
 export async function createSale(props: any) {
   try {
-    const response = await axios.post(`${API_URL}/sale`, props, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    // const obj1 = { ...props, business_id: '1111', sale_item: [{ amount: 100 }] }
+    // delete obj1.sale_tax
+    // delete obj1.is_fully_received
+    // delete obj1.enable_due_date
+    // delete obj1.enable_scan_item
+    // console.log(obj1)
+    const response = await services.sale.createSale({ ...props })
+    console.log(response)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -104,10 +111,9 @@ export async function createSale(props: any) {
 
 export async function updateSale(props: any) {
   try {
-    const response = await axios.patch(`${API_URL}/sale/${props.id}`, props, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const { id, obj } = props
+    const response = await services.sale.updateSale(id, { ...obj })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -115,10 +121,9 @@ export async function updateSale(props: any) {
 
 export async function deleteSale(props: any) {
   try {
-    const response = await axios.delete(`${API_URL}/sale/${props.id}`, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const { id } = props
+    const response = await services.sale.deleteSale(id)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }

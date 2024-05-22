@@ -44,7 +44,7 @@ import Action from '@renderer/components/container/action'
 export default function FormItemView(props: any) {
   const { mode20, modeBrand } = useThemeMode()
 
-  const { control, watch } = props.form
+  const { control, handleSubmit, watch } = props.form
 
   const watchField = watch()
 
@@ -75,6 +75,7 @@ export default function FormItemView(props: any) {
             rounded={0}
             color={modeBrand}
             leftIcon={<RiCheckboxCircleLine />}
+            onClick={handleSubmit(props.handleSave)}
           >
             Save
           </Button>

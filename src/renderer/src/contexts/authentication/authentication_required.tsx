@@ -1,7 +1,13 @@
 import { useLocation, Navigate } from 'react-router-dom'
 import { useAuthentication } from '@renderer/hooks/useAuthentication'
 
-export function RequireAuth({ children }: { children: JSX.Element }) {
+type RequireAuthenticationPropsType = {
+  children: JSX.Element
+}
+
+export default function RequireAuthentication({
+  children
+}: RequireAuthenticationPropsType): JSX.Element {
   const location = useLocation()
   const { user } = useAuthentication()
 

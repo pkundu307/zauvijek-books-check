@@ -31,37 +31,65 @@ export default function ListCustomerView(props: any) {
 
   const columns = [
     {
-      Header: 'Customer Name',
-      accessor: (row: customerType) => <Text fontSize="sm">{row?.party_name}</Text>
-    },
-    {
-      Header: 'Phone No.',
-      accessor: (row: customerType) => <Text fontSize="sm">{row.phone_no || '-'}</Text>
-    },
-    {
-      Header: 'Location',
-      accessor: (row: customerType) => <Text fontSize="sm">{row.place_of_supply || '-'}</Text>
-    },
-    {
-      Header: 'GST No.',
-      accessor: (row: customerType) => <Text fontSize="sm">{row.gst_no || '-'}</Text>
-    },
-    {
-      Header: 'Credit Limit',
-      accessor: (row: customerType) => <Text fontSize="sm">{parseCurrency(row.credit_limit)}</Text>
-    },
-    {
-      Header: 'Closing Balance',
-      accessor: (row: customerType) => (
-        <Text fontSize="sm">{parseCurrency(row.closing_balance)}</Text>
+      header: 'Customer Name',
+      accessorKey: 'party_name',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue()}
+        </Text>
       )
     },
     {
-      id: 'options',
-      accessor: (row: customerType) => (
-        <RowOptions type={'customer'} row={row} onDelete={props.handleDelete} />
-      ),
-      width: 8
+      header: 'Phone No.',
+      accessorKey: 'phone_no',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Location',
+      accessorKey: 'place_of_supply',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'GST No.',
+      accessorKey: 'tax_id',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Credit Limit',
+      accessorKey: 'credit_limit',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? parseCurrency(row.getValue()) : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Closing Balance',
+      accessorKey: 'closing_balance',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? parseCurrency(row.getValue()) : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'options',
+      accessorKey: 'id',
+      cell: (row: any) => (
+        <RowOptions type={'customer'} row={{ id: row.getValue() }} onDelete={props.handleDelete} />
+      )
     }
   ]
 
@@ -152,11 +180,10 @@ export default function ListCustomerView(props: any) {
 
       <AdvanceTable
         columns={columns || []}
-        data={props.customers?.data || []}
-        meta={props.customers?.meta}
-        setPageIndex={props.setPageIndex}
-        setPageSize={props.setPageSize}
-        useControlledState={props.useControlledState}
+        data={props?.data || []}
+        meta={props.meta}
+        pagination={props.pagination}
+        setPagination={props.setPagination}
       />
     </AppLayout>
   )

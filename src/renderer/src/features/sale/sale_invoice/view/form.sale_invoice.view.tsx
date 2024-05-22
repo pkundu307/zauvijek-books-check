@@ -1,3 +1,9 @@
+/**
+ * ----------------------------------------------------------------------
+ *  NPM MODULES START
+ *
+ */
+
 import {
   Flex,
   Stack,
@@ -18,11 +24,8 @@ import {
   Image,
   Avatar,
   Textarea,
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button
+  Button,
+  Divider
 } from '@chakra-ui/react'
 import {
   RiAddLine,
@@ -31,26 +34,84 @@ import {
   RiCheckboxCircleLine,
   RiFundsLine,
   RiListCheck,
+  RiSettings3Line,
   RiStore2Line
 } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { Controller } from 'react-hook-form'
 
-import Action from '@renderer/components/container/action'
-import Container from '@renderer/components/container'
-import ItemTable from '@renderer/components/table/item_table'
+/**
+ *
+ *  NPM MODULES END
+ * ----------------------------------------------------------------------
+ */
+
+/**
+ * ----------------------------------------------------------------------
+ *  CUSTOM MODULES START
+ *
+ */
+
 import AppLayout from '@renderer/layouts/app'
-import SelectDate from '@renderer/components/select_date'
 import useThemeMode from '@renderer/hooks/useThemeMode'
+import Container from '@renderer/components/container'
 import NoData from '@renderer/components/no_data'
+import Action from '@renderer/components/container/action'
+import ItemTable from '@renderer/components/table/item_table'
+import SelectDate from '@renderer/components/form/select_date'
+import DownshiftSearchParty from '@renderer/components/form/downshift_search_party'
+
+/**
+ *
+ *  CUSTOM MODULES END
+ * ----------------------------------------------------------------------
+ */
 
 export default function FormSaleInvoiceView(props: any) {
+  /**
+   * ----------------------------------------------------------------------
+   *  LIBRARY HOOKS START
+   *
+   */
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    getValues,
+    formState: { errors }
+  } = props.form
+  const enable_due_date = watch('is_due_date_enabled')
+  const party_name = watch('party_name')
+  /**
+   *
+   *  LIBRARY HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  CUSTOM HOOKS START
+   *
+   */
+
   const { mode20, modeBrand } = useThemeMode()
-  const { control, handleSubmit } = props.form
+
+  /**
+   *
+   *  CUSTOM HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
 
   return (
     <AppLayout>
-      <Flex py={2} justify="space-between" align="flex-start">
+      <Flex p={4} justify="space-between" align="center">
         <Stack direction="row" align="center" spacing={2}>
           <RiFundsLine size="18px" />
           <Breadcrumb separator={<RiArrowRightSLine />}>
@@ -71,6 +132,16 @@ export default function FormSaleInvoiceView(props: any) {
         <ButtonGroup spacing={2}>
           <Button
             px={4}
+            size="sm"
+            rounded={0}
+            color={modeBrand}
+            colorScheme="gray"
+            leftIcon={<RiSettings3Line />}
+          >
+            Settings
+          </Button>
+          <Button
+            px={4}
             size={'sm'}
             color={modeBrand}
             rounded={0}
@@ -83,7 +154,14 @@ export default function FormSaleInvoiceView(props: any) {
         </ButtonGroup>
       </Flex>
 
-      <Grid templateColumns={'repeat(2, 1fr)'} templateRows={'repeat(1, 1fr)'} gap={4}>
+      <Grid
+        templateColumns={'repeat(2, 1fr)'}
+        templateRows={'repeat(1, 1fr)'}
+        gap={4}
+        px={4}
+        maxH={'82vh'}
+        overflowY={'scroll'}
+      >
         <GridItem colSpan={1}>
           <Container title={<Text fontSize="sm">Compnay Details</Text>}>
             <Stack p={4} spacing={6} minH="178px">
@@ -94,13 +172,22 @@ export default function FormSaleInvoiceView(props: any) {
                   <Avatar icon={<RiStore2Line />} size={'xl'} rounded={'sm'} />
                 )}
                 <Image />
-                <Stack spacing={1}>
-                  <Text fontWeight={600}>Zauvijek Tech Pvt. Ltd.</Text>
-                  <Text fontSize="sm">Software Technology Parks of India</Text>
-                  <Text fontSize="sm">Phone: 987234234</Text>
-                  <Text fontSize="sm">Email: contact@zauvijek.com</Text>
-                  <Text fontSize="sm">GST: -</Text>
-                  <Text fontSize="sm">PAN: -</Text>
+
+                <Stack direction="row" spacing={12}>
+                  <Stack spacing={1}>
+                    <Text fontSize="sm">Business Name:</Text>
+                    <Text fontSize="sm">Address:</Text>
+                    <Text fontSize="sm">Phone No.:</Text>
+                    <Text fontSize="sm">GST No.:</Text>
+                    <Text fontSize="sm">PAN No:</Text>
+                  </Stack>
+                  <Stack spacing={1}>
+                    <Text fontWeight={600}>Zauvijek Tech Pvt. Ltd.</Text>
+                    <Text fontSize="sm">{getValues('billing_address') || '-'}</Text>
+                    <Text fontSize="sm">{getValues('phone_no') || '-'}</Text>
+                    <Text fontSize="sm">{getValues('tax_id') || '-'}</Text>
+                    <Text fontSize="sm">{getValues('pan_no') || '-'}</Text>
+                  </Stack>
                 </Stack>
               </Stack>
             </Stack>
@@ -109,11 +196,11 @@ export default function FormSaleInvoiceView(props: any) {
 
         <GridItem colSpan={1}>
           <Container
-            title={<Text fontSize="sm">Invoice Details</Text>}
+            title={<Text fontSize="sm">Sale Invoice Details</Text>}
             action={
               <Controller
                 control={control}
-                name="enable_due_date"
+                name="is_due_date_enabled"
                 render={({ field: { value, onChange } }) => (
                   <Switch
                     size="sm"
@@ -146,6 +233,7 @@ export default function FormSaleInvoiceView(props: any) {
                     )}
                   />
                 </FormControl>
+
                 <FormControl>
                   <FormLabel fontSize="sm">Sale Invoice No.</FormLabel>
                   <Controller
@@ -160,13 +248,16 @@ export default function FormSaleInvoiceView(props: any) {
                         size="sm"
                       />
                     )}
+                    rules={{ required: true }}
                   />
+                  {errors.invoice_no && <Text color={'red'}>Invoice No. Requeired</Text>}
                 </FormControl>
+
                 <FormControl>
                   <FormLabel fontSize="sm">Sale Invoice Date</FormLabel>
                   <Controller
                     control={control}
-                    name="sale_invoice_date"
+                    name="invoice_date"
                     render={({ field: { value, onChange } }) => (
                       <InputGroup size="sm" zIndex={2}>
                         <InputLeftAddon children={<RiCalendar2Line />} bg={mode20} />
@@ -177,41 +268,43 @@ export default function FormSaleInvoiceView(props: any) {
                 </FormControl>
               </Stack>
 
-              <Stack direction="row" spacing={4}>
-                <FormControl>
-                  <FormLabel fontSize="sm">Due Date</FormLabel>
-                  <Controller
-                    control={control}
-                    name="due_date"
-                    render={({ field: { value, onChange } }) => (
-                      <InputGroup size="sm" zIndex={2}>
-                        <InputLeftAddon children={<RiCalendar2Line />} bg={mode20} />
-                        <SelectDate value={value} onChange={onChange} />
-                      </InputGroup>
-                    )}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel fontSize="sm">Payment Terms</FormLabel>
-                  <Controller
-                    control={control}
-                    name="payment_terms"
-                    render={({ field: { value, onChange, onBlur } }) => (
-                      <InputGroup size="sm">
-                        <Input
-                          value={value}
-                          onChange={onChange}
-                          onBlur={onBlur}
-                          placeholder=""
-                          size="sm"
-                        />
-                        <InputRightAddon children={'Days'} />
-                      </InputGroup>
-                    )}
-                  />
-                </FormControl>
-                <FormControl />
-              </Stack>
+              {enable_due_date && (
+                <Stack direction="row" spacing={4}>
+                  <FormControl>
+                    <FormLabel fontSize="sm">Due Date</FormLabel>
+                    <Controller
+                      control={control}
+                      name="due_date"
+                      render={({ field: { value, onChange } }) => (
+                        <InputGroup size="sm" zIndex={2}>
+                          <InputLeftAddon children={<RiCalendar2Line />} bg={mode20} />
+                          <SelectDate value={value} onChange={onChange} />
+                        </InputGroup>
+                      )}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="sm">Payment Terms</FormLabel>
+                    <Controller
+                      control={control}
+                      name="payment_term"
+                      render={({ field: { value, onChange, onBlur } }) => (
+                        <InputGroup size="sm">
+                          <Input
+                            value={value}
+                            onChange={onChange}
+                            onBlur={onBlur}
+                            placeholder=""
+                            size="sm"
+                          />
+                          <InputRightAddon children={'Days'} />
+                        </InputGroup>
+                      )}
+                    />
+                  </FormControl>
+                  <FormControl />
+                </Stack>
+              )}
             </Stack>
           </Container>
         </GridItem>
@@ -221,19 +314,95 @@ export default function FormSaleInvoiceView(props: any) {
             title={<Text fontSize="sm">Party Details</Text>}
             action={
               <ButtonGroup spacing={4}>
-                <Action actionTitle="Select Party" actionIcon={<RiListCheck />} />
                 <Action actionTitle="Add Party" actionIcon={<RiAddLine />} />
               </ButtonGroup>
             }
           >
-            <Stack p={4} spacing={6}>
-              <NoData title="No party selected" />
+            <Stack direction="row" p={4} spacing={4}>
+              <FormControl w="33%">
+                <FormLabel fontSize="sm">Party Name</FormLabel>
+                <Controller
+                  control={control}
+                  name="party_name"
+                  render={({ field: { value, onChange } }) => (
+                    <DownshiftSearchParty
+                      items={props.partyData || []}
+                      value={value}
+                      onChange={onChange}
+                      placeholder="Enter party name"
+                      size="sm"
+                    />
+                  )}
+                  rules={{ required: true }}
+                />
+                {errors.party_name && <Text color={'red'}>Party Name Requeired</Text>}
+              </FormControl>
+              <Divider orientation="vertical" h="200px" />
+              {!party_name && (
+                <Flex w="67%" justify="center">
+                  <NoData title="No party selected." />
+                </Flex>
+              )}
+              {party_name && (
+                <Stack w="33%">
+                  <Text fontSize="sm" fontWeight={600}>
+                    Bill To
+                  </Text>
+                  <Stack direction="row" spacing={6}>
+                    <Stack spacing={1}>
+                      <Text fontSize="sm">Party Name:</Text>
+                      <Text fontSize="sm">Business Name:</Text>
+                      <Text fontSize="sm">Billing Address:</Text>
+                      <Text fontSize="sm">Phone No.:</Text>
+                      <Text fontSize="sm">GST No.:</Text>
+                      <Text fontSize="sm">PAN No:</Text>
+                      <Text fontSize="sm">Place of Supply:</Text>
+                    </Stack>
+                    <Stack spacing={1}>
+                      <Text fontSize="sm">{getValues('party_name') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('business_name') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('billing_address') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('phone_no') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('tax_id') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('pan_no') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('place_of_supply') || '-'}</Text>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              )}
+              {party_name && (
+                <Stack w="33%">
+                  <Text fontSize="sm" fontWeight={600}>
+                    Ship To
+                  </Text>
+                  <Stack direction="row" spacing={6}>
+                    <Stack spacing={1}>
+                      <Text fontSize="sm">Party Name:</Text>
+                      <Text fontSize="sm">Business Name:</Text>
+                      <Text fontSize="sm">Shipping Address:</Text>
+                      <Text fontSize="sm">Phone No.:</Text>
+                      <Text fontSize="sm">GST No.:</Text>
+                      <Text fontSize="sm">PAN No:</Text>
+                      <Text fontSize="sm">Place of Supply:</Text>
+                    </Stack>
+                    <Stack spacing={1}>
+                      <Text fontSize="sm">{getValues('party_name') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('business_name') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('shipping_address') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('phone_no') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('tax_id') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('pan_no') || '-'}</Text>
+                      <Text fontSize="sm">{getValues('place_of_supply') || '-'}</Text>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              )}
             </Stack>
           </Container>
         </GridItem>
 
         <GridItem colSpan={2}>
-          <ItemTable control={control} />
+          <ItemTable isTransactional={true} {...props} />
         </GridItem>
 
         <GridItem rowSpan={2} colSpan={1}>
@@ -249,7 +418,7 @@ export default function FormSaleInvoiceView(props: any) {
               <FormControl>
                 <Controller
                   control={control}
-                  name="terms"
+                  name="term_condition"
                   render={({ field: { value, onChange, onBlur } }) => (
                     <Textarea
                       value={value}
@@ -301,14 +470,14 @@ export default function FormSaleInvoiceView(props: any) {
           </Container>
         </GridItem>
 
-        <GridItem colSpan={2}>
-          <Alert status="info" variant="left-accent" fontSize="sm">
-            <AlertIcon />
-            <AlertTitle>Your browser is outdated!</AlertTitle>
-            <AlertDescription>Your Chakra experience may be degraded.</AlertDescription>
-          </Alert>
-        </GridItem>
+        <GridItem colSpan={2}></GridItem>
       </Grid>
     </AppLayout>
   )
+
+  /**
+   *
+   *  RENDERING END
+   * ----------------------------------------------------------------------
+   */
 }

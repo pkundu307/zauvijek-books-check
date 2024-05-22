@@ -1,5 +1,6 @@
 import * as React from 'react'
 import ListItemView from '../view/list.item.view'
+import { PaginationState } from '@tanstack/react-table'
 
 export default function ListItemController(props: any) {
   const [items, setItems] = React.useState({
@@ -7,6 +8,10 @@ export default function ListItemController(props: any) {
     meta: {}
   })
   const [isSearching, setSearching] = React.useState(false)
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
 
   React.useEffect(() => {
     if (props.data && isSearching === false) {
@@ -25,25 +30,6 @@ export default function ListItemController(props: any) {
     }
   }, [props.search])
 
-  const useControlledState = (state: any) => {
-    return React.useMemo(
-      () => ({
-        ...state,
-        pageIndex: props.page,
-        pageSize: props.limit
-      }),
-      [state]
-    )
-  }
-
-  const setPageIndex = React.useCallback((value: any) => {
-    props.setPage(value)
-  }, [])
-
-  const setPageSize = React.useCallback((value: any) => {
-    props.setLimit(value)
-  }, [])
-
   function searchFilter(value: string) {
     props.setSearch(value)
   }
@@ -53,9 +39,8 @@ export default function ListItemController(props: any) {
       items={items}
       search={props.search}
       searchFilter={searchFilter}
-      setPageSize={setPageSize}
-      setPageIndex={setPageIndex}
-      useControlledState={useControlledState}
+      pagination={pagination}
+      setPagination={setPagination}
     />
   )
 }

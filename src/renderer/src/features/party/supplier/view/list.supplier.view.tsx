@@ -31,37 +31,65 @@ export default function ListSupplierView(props: any) {
 
   const columns = [
     {
-      Header: 'Supplier Name',
-      accessor: (row: supplierType) => <Text fontSize="sm">{row?.party_name}</Text>
-    },
-    {
-      Header: 'Phone No.',
-      accessor: (row: supplierType) => <Text fontSize="sm">{row.phone_no || '-'}</Text>
-    },
-    {
-      Header: 'Location',
-      accessor: (row: supplierType) => <Text fontSize="sm">{row.place_of_supply || '-'}</Text>
-    },
-    {
-      Header: 'GST No.',
-      accessor: (row: supplierType) => <Text fontSize="sm">{row.gst_no || '-'}</Text>
-    },
-    {
-      Header: 'Credit Limit',
-      accessor: (row: supplierType) => <Text fontSize="sm">{parseCurrency(row.credit_limit)}</Text>
-    },
-    {
-      Header: 'Closing Balance',
-      accessor: (row: supplierType) => (
-        <Text fontSize="sm">{parseCurrency(row.closing_balance)}</Text>
+      header: 'Supplier Name',
+      accessorKey: 'party_name',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue()}
+        </Text>
       )
     },
     {
-      id: 'options',
-      accessor: (row: supplierType) => (
-        <RowOptions type={'supplier'} row={row} onDelete={props.handleDelete} />
-      ),
-      width: 8
+      header: 'Phone No.',
+      accessorKey: 'phone_no',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Location',
+      accessorKey: 'place_of_supply',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'GST No.',
+      accessorKey: 'gst_no',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Credit Limit',
+      accessorKey: 'credit_limit',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? parseCurrency(row.getValue()) : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Closing Balance',
+      accessorKey: 'closing_balance',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? parseCurrency(row.getValue()) : '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'options',
+      accessorKey: 'id',
+      cell: (row: any) => (
+        <RowOptions type={'supplier'} row={{ id: row.getValue() }} onDelete={props.handleDelete} />
+      )
     }
   ]
 
@@ -152,11 +180,10 @@ export default function ListSupplierView(props: any) {
 
       <AdvanceTable
         columns={columns || []}
-        data={props.suppliers?.data || []}
-        meta={props.suppliers?.meta}
-        setPageIndex={props.setPageIndex}
-        setPageSize={props.setPageSize}
-        useControlledState={props.useControlledState}
+        data={props?.data || []}
+        meta={props.meta}
+        pagination={props.pagination}
+        setPagination={props.setPagination}
       />
     </AppLayout>
   )

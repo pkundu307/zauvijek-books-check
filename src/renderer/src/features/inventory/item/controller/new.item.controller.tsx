@@ -8,5 +8,14 @@ export default function NewItemController(props: any) {
   const form = useForm({
     defaultValues
   })
-  return <FormItemView title="New Item" form={form} {...props} />
+
+  function handleSave(values: any) {
+    const digest = {
+      ...values
+      // business_id: '1111',
+      // sale_type: 'credit_note'
+    }
+    props.handleNew(digest)
+  }
+  return <FormItemView title="New Item" form={form} handleSave={handleSave} />
 }

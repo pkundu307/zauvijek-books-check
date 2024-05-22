@@ -1,15 +1,13 @@
 import axios from 'axios'
 import { API_URL } from '../..'
 import { cookies } from '@renderer/utils/cookie'
+const services = window.ZauvijekAPI.services
 
 export async function getItems(props: any) {
   try {
-    const { business_id, page, take } = props
-    const response = await axios.get(
-      `${API_URL}/item?business_id=${business_id}&page=${page}&take=${take}`,
-      { headers: { Authorization: `Bearer ${cookies.get('access_token')}` } }
-    )
-    return response?.data
+    const { business_id } = props
+    const response = await services.item.getItems({ business_id })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -64,12 +62,10 @@ export async function getLowStockCount(props: any) {
   }
 }
 
-export async function getItemById(props: any) {
+export async function getItemById(id: string) {
   try {
-    const response = await axios.get(`${API_URL}/item/${props.id}`, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.item.getItemById(id)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -77,32 +73,26 @@ export async function getItemById(props: any) {
 
 export async function createItem(props: any) {
   try {
-    const response = await axios.post(`${API_URL}/item`, props, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.item.createItem({ ...props })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
 }
 
-export async function updateItem(props: any) {
+export async function updateItem(id: string, props: any) {
   try {
-    const response = await axios.patch(`${API_URL}/item/${props.id}`, props, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.item.updateItem(id, { ...props })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
 }
 
-export async function deleteItem(props: any) {
+export async function deleteItem(id: string) {
   try {
-    const response = await axios.delete(`${API_URL}/item/${props.id}`, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.item.deleteItem(id)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }

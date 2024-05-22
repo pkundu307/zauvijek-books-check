@@ -1,102 +1,147 @@
-import React from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useToast } from '@chakra-ui/react'
-import { useDebounce } from 'use-debounce'
-
 import Loading from '@renderer/components/loading'
-import { useAuthentication } from '@renderer/hooks/useAuthentication'
-import { getSales, deleteSale, searchSales } from '@renderer/services/sale'
+import { useToast } from '@chakra-ui/react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import React from 'react'
+import { deleteSale, getSales } from '@renderer/services/sale'
 import ListSaleInvoiceController from '../controller/list.sale_invoice.controller'
 
 export default function ListSaleInvoiceModel() {
+  /**
+   * ----------------------------------------------------------------------
+   *  LIBRARY HOOKS START
+   *
+   */
+
   const toast = useToast()
   const queryClient = useQueryClient()
-  const { user } = useAuthentication()
 
+  /**
+   *
+   *  LIBRARY HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  CUSTOM HOOKS START
+   *
+   */
+
+  // const { user } = useAuthentication()
+
+  /**
+   *
+   *  CUSTOM HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL STATES START
+   *
+   */
   const [selectedDates, setSelectedDates] = React.useState<Date[]>([
-    new Date('2023-04-01'),
-    new Date('2024-03-31')
+    new Date('2024-04-20'),
+    new Date('2024-04-30')
   ])
-  const [page, setPage] = React.useState(0)
-  const [limit, setLimit] = React.useState(10)
   const [search, setSearch] = React.useState('')
 
-  const { isLoading, data } = useQuery({
-    queryKey: [
-      'getSales',
-      user?.business_id,
-      'sale_invoice',
-      selectedDates[0],
-      selectedDates[1],
-      page + 1,
-      limit
-    ],
+  /**
+   *
+   *  LOCAL STATES END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  QUERY START
+   *
+   */
+  const getSaleInvoices = useQuery({
+    queryKey: ['getSales', '1111', 'sale_invoice', selectedDates[0], selectedDates[1]],
     queryFn: () =>
       getSales({
-        business_id: user?.business_id,
+        business_id: '1111',
         sale_type: 'sale_invoice',
-        start_date: selectedDates[0],
-        end_date: selectedDates[1],
-        page: page + 1,
-        take: limit
+        startDate: selectedDates[0],
+        endDate: selectedDates[1]
       }),
     refetchOnWindowFocus: false,
     retry: 1
   })
+  /**
+   *
+   *  QUERY END
+   * ----------------------------------------------------------------------
+   */
 
-  // Search
-  const debouncedFilter = useDebounce(search, 500)
-  const { data: searchData } = useQuery({
-    queryKey: ['searchSaleInvoices', user?.business_id, debouncedFilter[0]],
-    queryFn: () =>
-      searchSales({
-        business_id: user?.business_id,
-        sale_type: 'sale_invoice',
-        party_name: debouncedFilter[0]
-      }),
-    enabled: !!search
-  })
+  /**
+   * ----------------------------------------------------------------------
+   *  MUTATION START
+   *
+   */
 
-  // Delete
-  const { mutate } = useMutation({
+  const deleteSaleInvoice = useMutation({
     mutationFn: deleteSale,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['getParties', user?.business_id, 'sale_invoice', 1, 10]
+        queryKey: ['getSales', '1111', 'sale_invoice', selectedDates[0], selectedDates[1]]
       })
       toast({
-        position: 'top',
-        description: `Sale Invoice deleted successfully`,
-        status: 'success',
-        duration: 1500
+        description: 'Sale Invoice deleted successfully.',
+        status: 'success'
       })
     }
   })
 
+  /**
+   *
+   *  MUTATION END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  HANDLER FUNCTIONS START
+   *
+   */
+
   function handleDelete(value: string) {
-    mutate({ id: value })
+    deleteSaleInvoice?.mutate({ id: value })
   }
 
   function handleSelectedDates(value: Date[]) {
     setSelectedDates(value)
   }
 
-  if (isLoading) {
-    return <Loading />
+  function searchFilter(value: string) {
+    setSearch(value)
   }
 
+  /**
+   *
+   *  HANDLER FUNCTIONS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
+
+  console.log('----->>>>>', getSaleInvoices?.data)
+
+  if (getSaleInvoices?.isLoading) {
+    return <Loading />
+  }
   return (
     <ListSaleInvoiceController
-      data={data || []}
       selectedDates={selectedDates}
       handleSelectedDates={handleSelectedDates}
-      page={page}
-      limit={limit}
-      setPage={setPage}
-      setLimit={setLimit}
+      data={getSaleInvoices?.data || []}
       search={search}
-      setSearch={setSearch}
-      searchData={searchData}
+      searchFilter={searchFilter}
       handleDelete={handleDelete}
     />
   )

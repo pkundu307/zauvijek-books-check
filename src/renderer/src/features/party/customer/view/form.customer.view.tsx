@@ -1,3 +1,9 @@
+/**
+ * ----------------------------------------------------------------------
+ *  LIBRARIES
+ * ----------------------------------------------------------------------
+ */
+
 import {
   Flex,
   Stack,
@@ -31,6 +37,11 @@ import {
 import { Link } from 'react-router-dom'
 import { Controller } from 'react-hook-form'
 
+/**
+ * ----------------------------------------------------------------------
+ *  MODULES
+ * ----------------------------------------------------------------------
+ */
 import AppLayout from '@renderer/layouts/app'
 import useThemeMode from '@renderer/hooks/useThemeMode'
 import Container from '@renderer/components/container'
@@ -113,15 +124,24 @@ export default function FormCustomerView(props: any) {
                     <FormLabel fontSize="sm">Customer Type</FormLabel>
                     <Controller
                       control={control}
-                      name="party_form"
-                      render={({ field: { value, onChange } }) => (
-                        <RadioGroup value={value} onChange={onChange} size="sm">
-                          <Stack direction="row" spacing={6}>
-                            <Radio value="business">Business</Radio>
-                            <Radio value="individual">Individual</Radio>
-                          </Stack>
-                        </RadioGroup>
-                      )}
+                      name="is_business"
+                      render={({ field: { value, onChange } }) => {
+                        const party_form = value ? 'business' : 'individual'
+                        return (
+                          <RadioGroup
+                            value={party_form}
+                            onChange={(value) => {
+                              onChange(value === 'business' ? true : false)
+                            }}
+                            size="sm"
+                          >
+                            <Stack direction="row" spacing={6}>
+                              <Radio value={'business'}>Business</Radio>
+                              <Radio value={'individual'}>Individual</Radio>
+                            </Stack>
+                          </RadioGroup>
+                        )
+                      }}
                     />
                   </FormControl>
                   <FormControl>
@@ -188,6 +208,25 @@ export default function FormCustomerView(props: any) {
                     <Controller
                       control={control}
                       name="phone_no"
+                      render={({ field: { value, onChange, onBlur } }) => (
+                        <InputGroup size="sm">
+                          <InputLeftAddon children={'+91'} />
+                          <Input
+                            value={value}
+                            onChange={onChange}
+                            onBlur={onBlur}
+                            placeholder="Enter phone number"
+                            size="sm"
+                          />
+                        </InputGroup>
+                      )}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="sm">Alternate Phone Number</FormLabel>
+                    <Controller
+                      control={control}
+                      name="phone_no_alt"
                       render={({ field: { value, onChange, onBlur } }) => (
                         <InputGroup size="sm">
                           <InputLeftAddon children={'+91'} />
@@ -436,6 +475,22 @@ export default function FormCustomerView(props: any) {
 
                 <Stack direction="row" spacing={4}>
                   <FormControl>
+                    <FormLabel fontSize="sm">TAN Number</FormLabel>
+                    <Controller
+                      control={control}
+                      name="tan_no"
+                      render={({ field: { value, onChange, onBlur } }) => (
+                        <Input
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          placeholder="Enter tan number"
+                          size="sm"
+                        />
+                      )}
+                    />
+                  </FormControl>
+                  <FormControl>
                     <FormLabel fontSize="sm">Place of supply</FormLabel>
                     <Controller
                       control={control}
@@ -449,8 +504,32 @@ export default function FormCustomerView(props: any) {
                       )}
                     />
                   </FormControl>
-                  <FormControl />
                 </Stack>
+              </Stack>
+            </Container>
+          </GridItem>
+
+          <GridItem colSpan={1}>
+            <Container title={<Text fontSize="sm">Notes</Text>}>
+              <Stack>
+                <FormControl>
+                  <Controller
+                    control={control}
+                    name="notes"
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <Textarea
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        placeholder="Enter notes"
+                        resize="none"
+                        rows={5}
+                        size="sm"
+                        style={{ border: 'none', borderRadius: 0 }}
+                      />
+                    )}
+                  />
+                </FormControl>
               </Stack>
             </Container>
           </GridItem>

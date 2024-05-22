@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import Loading from '@renderer/components/loading'
-import { useAuthentication } from '@renderer/hooks/useAuthentication'
 import { createParty } from '@renderer/services/party'
 import NewCustomerController from '../controller/new.customer.controller'
 
@@ -11,13 +10,12 @@ export default function NewCustomerModel() {
   const toast = useToast()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { user } = useAuthentication()
 
   const { isPending, mutate } = useMutation({
     mutationFn: createParty,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['getParties', user?.business_id, 'customer', 1, 10]
+        queryKey: ['getParties', '1111', 'customer']
       })
       toast({
         position: 'top',

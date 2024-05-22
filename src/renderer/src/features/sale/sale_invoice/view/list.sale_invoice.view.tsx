@@ -1,3 +1,9 @@
+/**
+ * ----------------------------------------------------------------------
+ *  NPM MODULES START
+ *
+ */
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,69 +24,153 @@ import {
   Tag,
   Text
 } from '@chakra-ui/react'
-import { RiAddLine, RiArrowRightSLine, RiCalendar2Line, RiFundsLine } from 'react-icons/ri'
+import {
+  RiAddLine,
+  RiArrowRightSLine,
+  RiCalendar2Line,
+  RiFundsLine,
+  RiSettings3Line
+} from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 
-import useThemeMode from '@renderer/hooks/useThemeMode'
+/**
+ *
+ *  NPM MODULES END
+ * ----------------------------------------------------------------------
+ */
+
+/**
+ * ----------------------------------------------------------------------
+ *  CUSTOM MODULES START
+ *
+ */
+
 import AppLayout from '@renderer/layouts/app'
-import SelectDateRange from '@renderer/components/select_date_range'
-import { AdvanceTable } from '@renderer/components/table/advance_table'
-import { Search } from '@renderer/components/search'
-import { parseCurrency } from '@renderer/utils/parse_currency'
+import useThemeMode from '@renderer/hooks/useThemeMode'
+import SelectDateRange from '@renderer/components/form/select_date_range'
+import { Search } from '@renderer/components/form/search'
 import { RowOptions } from '@renderer/components/row_options'
-import { parseDate } from '@renderer/utils/parse_date'
+import { parseCurrency } from '@renderer/utils/parse_currency'
+import { AdvanceTable } from '@renderer/components/table/advance_table'
+import { format } from 'date-fns'
+
+/**
+ *
+ *  CUSTOM MODULES END
+ * ----------------------------------------------------------------------
+ */
 
 export default function ListSaleInvoiceView(props: any) {
+  /**
+   * ----------------------------------------------------------------------
+   *  CUSTOM HOOKS START
+   *
+   */
+
   const { mode20, modeBrand } = useThemeMode()
+
+  /**
+   *
+   *  CUSTOM HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  TABLE COLUMNS START
+   *
+   */
 
   const columns = [
     {
-      Header: 'Date',
-      accessor: (row: saleInvoiceType) => <Text fontSize="sm">{parseDate(row?.invoice_date)}</Text>
-    },
-    {
-      Header: 'Invoice No.',
-      accessor: (row: saleInvoiceType) => (
-        <Text fontSize="sm">
-          {row?.invoice_prefix}
-          {row?.invoice_no}
+      header: 'Date',
+      accessorKey: 'invoice_date',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {format(row.getValue(), 'dd/MM/yyyy')}
         </Text>
       )
     },
     {
-      Header: 'Customer name',
-      accessor: (row: saleInvoiceType) => <Text fontSize="sm">{row.customer_name || '-'}</Text>
+      header: 'Invoice No.',
+      accessorKey: 'invoice_no',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
     },
     {
-      Header: 'Total Amount',
-      accessor: (row: saleInvoiceType) => <Text fontSize="sm">{row.total_amount || '-'}</Text>
+      header: 'Customer name',
+      accessorKey: 'party_name',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
     },
     {
-      Header: 'Unpaid',
-      accessor: (row: saleInvoiceType) => <Text fontSize="sm">{parseCurrency(row.balance)}</Text>
+      header: 'Total Amount',
+      accessorKey: 'total_amount',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '-'}
+        </Text>
+      )
     },
     {
-      Header: 'Status',
-      accessor: (row: saleInvoiceType) => {
-        return row?.balance > 0 ? (
-          <Tag colorScheme={'red'}>Unpaid</Tag>
-        ) : (
-          <Tag colorScheme={'green'}>Paid</Tag>
-        )
-      }
+      header: 'Unpaid',
+      accessorKey: 'balance_amount',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() ? row.getValue() : '0'}
+        </Text>
+      )
     },
     {
-      id: 'options',
-      accessor: (row: saleInvoiceType) => (
-        <RowOptions type={'sale-invoice'} row={row} onDelete={props.handleDelete} />
-      ),
-      width: 8
+      header: 'Status',
+      accessorKey: 'balance_amount',
+      cell: (row: any) => (
+        <Text textAlign={'center'}>
+          {row.getValue() ? (
+            row.getValue() > 0 ? (
+              <Tag colorScheme={'red'}>Unpaid</Tag>
+            ) : (
+              <Tag colorScheme={'green'}>Paid</Tag>
+            )
+          ) : (
+            <Tag colorScheme={'green'}>Paid</Tag>
+          )}
+        </Text>
+      )
+    },
+    {
+      header: 'options',
+      accessorKey: 'id',
+      cell: (row: any) => (
+        <RowOptions
+          type={'sale-invoice'}
+          row={{ id: row.getValue() }}
+          onDelete={props.handleDelete}
+        />
+      )
     }
   ]
 
+  /**
+   *
+   *  TABLE COLUMNS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
   return (
     <AppLayout>
-      <Flex py={2} justify={'space-between'} align="flex-start">
+      <Flex py={4} px={0} justify={'space-between'} align="center">
         <Stack direction={'row'} align={'center'} spacing={2}>
           <RiFundsLine size={'18px'} />
           <Breadcrumb separator={<RiArrowRightSLine />}>
@@ -92,9 +182,22 @@ export default function ListSaleInvoiceView(props: any) {
             </BreadcrumbItem>
           </Breadcrumb>
         </Stack>
+
+        <ButtonGroup spacing={2}>
+          <Button
+            px={4}
+            size="sm"
+            rounded={0}
+            color={modeBrand}
+            colorScheme="gray"
+            leftIcon={<RiSettings3Line />}
+          >
+            Settings
+          </Button>
+        </ButtonGroup>
       </Flex>
 
-      <Grid py={2} templateColumns={'repeat(3, 1fr)'} gap={6}>
+      <Grid templateColumns={'repeat(3, 1fr)'} gap={6} px={0}>
         <GridItem colSpan={1}>
           <Card bg={mode20} boxShadow={'none'} rounded={0}>
             <CardBody>
@@ -127,7 +230,7 @@ export default function ListSaleInvoiceView(props: any) {
         </GridItem>
       </Grid>
 
-      <Flex py={2} justify={'space-between'} align={'center'}>
+      <Flex py={4} px={0} justify={'space-between'} align={'center'}>
         <Stack direction={'row'} spacing={4} align={'center'}>
           <Flex>
             <InputGroup size={'sm'} zIndex={2}>
@@ -157,15 +260,19 @@ export default function ListSaleInvoiceView(props: any) {
           </Link>
         </ButtonGroup>
       </Flex>
-
       <AdvanceTable
-        columns={columns || []}
-        data={props.saleInvoices?.data || []}
-        meta={props.saleInvoices?.meta}
-        setPageIndex={props.setPageIndex}
-        setPageSize={props.setPageSize}
-        useControlledState={props.useControlledState}
+        columns={columns}
+        data={props?.data || []}
+        meta={props.meta}
+        pagination={props.pagination}
+        setPagination={props.setPagination}
       />
     </AppLayout>
   )
+
+  /**
+   *
+   *  RENDERING END
+   * ----------------------------------------------------------------------
+   */
 }

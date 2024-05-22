@@ -3,5 +3,15 @@ import FormSupplierView from '../view/form.supplier.view'
 
 export default function NewSupplierController(props: any) {
   const form = useForm()
-  return <FormSupplierView title="New Supplier" form={form} {...props} />
+
+  function handleSave(values: any) {
+    const digest = {
+      ...values,
+      business_id: '1111',
+      party_type: 'customer'
+    }
+    props.handleNew(digest)
+  }
+
+  return <FormSupplierView title="New Supplier" form={form} handleSave={handleSave} />
 }

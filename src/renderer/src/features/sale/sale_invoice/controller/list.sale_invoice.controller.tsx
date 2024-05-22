@@ -1,23 +1,57 @@
-import * as React from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { PaginationState } from '@tanstack/react-table'
+import { searchByProperty } from '@renderer/utils/serach_by_propertyname'
 import ListSaleInvoiceView from '../view/list.sale_invoice.view'
 
-export default function ListSaleInvoiceController(props: any) {
-  const [saleInvoices, setSaleInvoices] = React.useState({
-    data: [],
-    meta: {}
+const ListSaleInvoiceController = (props: any) => {
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL STATES START
+   *
+   */
+  const [data, setData] = useState({
+    data: [...props.data],
+    meta: { totalPage: props.data.length }
   })
-  const [isSearching, setSearching] = React.useState(false)
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  })
+  const [isSearching, setSearching] = useState(false)
 
-  React.useEffect(() => {
+  /**
+   *
+   *  LOCAL STATES END
+   * ----------------------------------------------------------------------
+   */
+
+  const updateData = useMemo(
+    () =>
+      data?.data.slice(
+        pagination.pageIndex * pagination.pageSize,
+        pagination.pageIndex * pagination.pageSize + pagination.pageSize
+      ) || [],
+    [data, pagination]
+  )
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL EFFECTS START
+   *
+   */
+  useEffect(() => {
     if (props.data && isSearching === false) {
-      setSaleInvoices(props.data)
+      setData({
+        data: [...props.data],
+        meta: { totalPage: props.data.length }
+      })
     } else {
-      const result = { data: props.searchData, meta: {} }
-      setSaleInvoices(result)
+      const updateData = searchByProperty(props?.data, 'party_name', props.search)
+      const result = { data: updateData, meta: { totalPage: updateData.length } }
+      setData(result)
     }
-  }, [props.data, isSearching, props.searchData])
+  }, [props.data, isSearching, props.search])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.search === '') {
       setSearching(false)
     } else {
@@ -25,44 +59,36 @@ export default function ListSaleInvoiceController(props: any) {
     }
   }, [props.search])
 
-  const useControlledState = (state: any) => {
-    return React.useMemo(
-      () => ({
-        ...state,
-        pageIndex: props.page,
-        pageSize: props.limit
-      }),
-      [state]
-    )
-  }
+  /**
+   *
+   *  LOCAL EFFECTS END
+   * ----------------------------------------------------------------------
+   */
 
-  const setPageIndex = React.useCallback((value: any) => {
-    props.setPage(value)
-  }, [])
-
-  const setPageSize = React.useCallback((value: any) => {
-    props.setLimit(value)
-  }, [])
-
-  function searchFilter(value: string) {
-    props.setSearch(value)
-  }
-
-  function handleDelete(value: string) {
-    props.handleDelete(value)
-  }
-
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
   return (
     <ListSaleInvoiceView
-      saleInvoices={saleInvoices}
-      search={props.search}
-      searchFilter={searchFilter}
-      setPageSize={setPageSize}
-      setPageIndex={setPageIndex}
-      useControlledState={useControlledState}
-      handleDelete={handleDelete}
       selectedDates={props.selectedDates}
       handleSelectedDates={props.handleSelectedDates}
+      data={updateData}
+      meta={data?.meta || {}}
+      search={props.search}
+      searchFilter={props.searchFilter}
+      handleDelete={props.handleDelete}
+      pagination={pagination}
+      setPagination={setPagination}
     />
   )
+
+  /**
+   *
+   *  RENDERING END
+   * ----------------------------------------------------------------------
+   */
 }
+
+export default ListSaleInvoiceController

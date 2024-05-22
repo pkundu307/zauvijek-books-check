@@ -32,31 +32,47 @@ export default function ListBankCashView(props: any) {
 
   const columns = [
     {
-      Header: 'Account Name',
-      accessor: (row: bankCashChequeType) => <Text fontSize="sm">{row?.account_name}</Text>
-    },
-    {
-      Header: 'Account Type',
-      accessor: (row: bankCashChequeType) => <Text fontSize="sm">{row.account_type || '-'}</Text>
-    },
-    {
-      Header: 'Opening Balance',
-      accessor: (row: bankCashChequeType) => (
-        <Text fontSize="sm">{parseCurrency(row.opening_balance) || '-'}</Text>
+      header: 'Account Name',
+      accessorKey: 'account_name',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue()}
+        </Text>
       )
     },
     {
-      Header: 'Closing Balance',
-      accessor: (row: bankCashChequeType) => (
-        <Text fontSize="sm">{parseCurrency(row.closing_balance) || '-'}</Text>
+      header: 'Account Type',
+      accessorKey: 'account_type',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {row.getValue() || '-'}
+        </Text>
       )
     },
     {
-      id: 'options',
-      accessor: (row: bankCashChequeType) => (
-        <RowOptions type={'bank-cash-cheque'} row={row} onDelete={props.handleDelete} />
-      ),
-      width: 8
+      header: 'Opening Balance',
+      accessorKey: 'opening_balance',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {parseCurrency(row.getValue()) || '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'Closing Balance',
+      accessorKey: 'closing_balance',
+      cell: (row: any) => (
+        <Text fontSize="sm" textAlign={'center'}>
+          {parseCurrency(row.getValue()) || '-'}
+        </Text>
+      )
+    },
+    {
+      header: 'options',
+      accessorKey: 'id',
+      cell: (row: any) => (
+        <RowOptions type={'bank-cash'} row={{ id: row.getValue() }} onDelete={props.handleDelete} />
+      )
     }
   ]
 
@@ -148,11 +164,10 @@ export default function ListBankCashView(props: any) {
 
       <AdvanceTable
         columns={columns || []}
-        data={props.customers?.data || []}
-        meta={props.customers?.meta}
-        setPageIndex={props.setPageIndex}
-        setPageSize={props.setPageSize}
-        useControlledState={props.useControlledState}
+        data={props?.data || []}
+        meta={props.meta}
+        pagination={props.pagination}
+        setPagination={props.setPagination}
       />
     </AppLayout>
   )

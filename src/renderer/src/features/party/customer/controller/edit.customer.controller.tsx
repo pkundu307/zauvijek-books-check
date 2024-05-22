@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form'
-
 import FormCustomerView from '../view/form.customer.view'
 
 export default function EditCustomerController(props: any) {

@@ -1,45 +1,46 @@
-import * as React from 'react'
-import { useTable } from 'react-table'
 import { Table, Thead, Tbody, Tr, Th, Td, Flex } from '@chakra-ui/react'
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
-import useThemeMode from '@renderer/hooks/useThemeMode'
 import NoData from '@renderer/components/no_data'
+import useThemeMode from '@renderer/hooks/useThemeMode'
 
-export function SimpleTable(props: any) {
-  const { mode20 } = useThemeMode()
-
-  const data = React.useMemo(() => props.data, [props.data])
-  const columns = React.useMemo(() => props.columns, [props.columns])
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+export function SimpleTable({ columns, data, meta, pagination, setPagination }: any) {
+  const { mode30 } = useThemeMode()
+  const table = useReactTable({
+    data: data ? data : [],
     columns,
-    data: data ? data : []
+    rowCount: meta.totalPage,
+    state: {
+      pagination
+    },
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true
   })
 
   return (
-    <Flex direction={'column'}>
-      <Flex>
-        <Table {...getTableProps()} variant={'simple'}>
-          <Thead bg={mode20}>
-            {headerGroups.map((headerGroup, i) => (
-              <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, i) => (
-                  <Th key={i} {...column.getHeaderProps()}>
-                    {column.render('Header')}
+    <Flex flex={1} mb={2} p={4} direction={'column'}>
+      <Flex borderTop={'1px solid'} borderColor={mode30} maxH={'65vh'} overflowY={'scroll'}>
+        <Table>
+          <Thead bg={'gray'}>
+            {table.getHeaderGroups().map((headerGroup: any) => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map((header: any) => (
+                  <Th p={2.5} key={header.id} fontSize={'xs'} border={'1px solid'}>
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                   </Th>
                 ))}
               </Tr>
             ))}
           </Thead>
-          <Tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row)
+          <Tbody>
+            {table.getRowModel().rows.map((row) => {
               return (
-                <Tr key={i} {...row.getRowProps()}>
-                  {row.cells.map((cell, i) => {
+                <Tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={i} py={3} {...cell.getCellProps()}>
-                        {cell.render('Cell')}
+                      <Td key={cell.id} py={2} px={3} fontSize={'sm'} border={'1px solid'}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     )
                   })}
@@ -49,8 +50,13 @@ export function SimpleTable(props: any) {
           </Tbody>
         </Table>
       </Flex>
+
       {/* No data found */}
-      {data?.length === 0 && <NoData />}
+      {data?.length === 0 && (
+        <Flex minH={'20vh'} justify={'center'} border={'1px solid'} borderColor={mode30}>
+          <NoData />
+        </Flex>
+      )}
     </Flex>
   )
 }

@@ -4,26 +4,55 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import Loading from '@renderer/components/loading'
 import { getPartyById, updateParty } from '@renderer/services/party'
-import { useAuthentication } from '@renderer/hooks/useAuthentication'
+// import { useAuthentication } from '@renderer/hooks/useAuthentication'
 import EditCustomerController from '../controller/edit.customer.controller'
 
 export default function EditCustomerModel() {
+  /**
+   * ----------------------------------------------------------------------
+   *  LIBRARY HOOKS START
+   *
+   */
+
   const { id } = useParams()
   const toast = useToast()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { user } = useAuthentication()
+
+  /**
+   *
+   *  LIBRARY HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  QUERY START
+   *
+   */
 
   const { isLoading, data } = useQuery({
     queryKey: ['getCustomer', id],
-    queryFn: () => getPartyById({ id })
+    queryFn: () => getPartyById(id as string)
   })
+
+  /**
+   *
+   *  QUERY END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  MUTATION START
+   *
+   */
 
   const { isPending, mutate } = useMutation({
     mutationFn: updateParty,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['getParties', user?.business_id, 'customer', 1, 10]
+        queryKey: ['getParties', '1111', 'customer']
       })
       toast({
         position: 'top',
@@ -43,9 +72,33 @@ export default function EditCustomerModel() {
     }
   })
 
+  /**
+   *
+   *  MUTATION END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  HANDLER FUNCTIONS START
+   *
+   */
+
   function handleUpdate(values: any) {
-    mutate(values)
+    mutate({ id: id, obj: values })
   }
+
+  /**
+   *
+   *  HANDLER FUNCTIONS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  RENDERING START
+   *
+   */
 
   if (isPending || isLoading) {
     return <Loading />

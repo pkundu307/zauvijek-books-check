@@ -1,16 +1,14 @@
 import { useForm } from 'react-hook-form'
 
-import { useAuthentication } from '@renderer/hooks/useAuthentication'
 import FormCustomerView from '../view/form.customer.view'
 
 export default function NewCustomerController(props: any) {
   const form = useForm()
-  const { user } = useAuthentication()
 
   function handleSave(values: any) {
     const digest = {
       ...values,
-      business_id: user?.business_id,
+      business_id: '1111',
       party_type: 'customer'
     }
     props.handleNew(digest)

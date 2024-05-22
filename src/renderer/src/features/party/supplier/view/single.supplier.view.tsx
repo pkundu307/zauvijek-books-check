@@ -32,7 +32,7 @@ export default function SingleSupplierView(props: any) {
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbItem>
-              <BreadcrumbLink isCurrentPage>{props.title}</BreadcrumbLink>
+              <BreadcrumbLink isCurrentPage>{props.data.title}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
         </Stack>
@@ -48,7 +48,7 @@ export default function SingleSupplierView(props: any) {
                     Supplier type
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.party_form || '-'}
+                    {props.data.party_form || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -56,7 +56,7 @@ export default function SingleSupplierView(props: any) {
                     Business name
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.business_name || '-'}
+                    {props.data.business_name || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -67,7 +67,7 @@ export default function SingleSupplierView(props: any) {
                     Supplier name
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.party_name || '-'}
+                    {props.data.party_name || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -75,7 +75,7 @@ export default function SingleSupplierView(props: any) {
                     Category
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.party_category || '-'}
+                    {props.data.party_category || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -86,7 +86,7 @@ export default function SingleSupplierView(props: any) {
                     Phone number
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.phone_no || '-'}
+                    {props.data.phone_no || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -94,7 +94,7 @@ export default function SingleSupplierView(props: any) {
                     Email
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.email || '-'}
+                    {props.data.email || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -111,7 +111,7 @@ export default function SingleSupplierView(props: any) {
                     Billing Address
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.billing_address || '-'}
+                    {props.data.billing_address || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -119,7 +119,7 @@ export default function SingleSupplierView(props: any) {
                     Shipping Address
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.shipping_address || '-'}
+                    {props.data.shipping_address || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -136,7 +136,7 @@ export default function SingleSupplierView(props: any) {
                     Opening balance
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.opening_balance || '-'}
+                    {props.data.opening_balance || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -144,7 +144,7 @@ export default function SingleSupplierView(props: any) {
                     Opening balance date
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.opening_balance_date || '-'}
+                    {props.data.opening_balance_date || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -155,7 +155,7 @@ export default function SingleSupplierView(props: any) {
                     Credit period
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.credit_period || '-'}
+                    {props.data.credit_period || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -163,7 +163,7 @@ export default function SingleSupplierView(props: any) {
                     Credit limit
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.credit_limit || '-'}
+                    {props.data.credit_limit || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -173,7 +173,7 @@ export default function SingleSupplierView(props: any) {
                     Closing balance
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.closing_balance || '-'}
+                    {props.data.closing_balance || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%" />
@@ -191,7 +191,7 @@ export default function SingleSupplierView(props: any) {
                     Tax Id / GST number
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.tax_id || '-'}
+                    {props.data.tax_id || '-'}
                   </Text>
                 </Stack>
                 <Stack w="50%">
@@ -199,7 +199,7 @@ export default function SingleSupplierView(props: any) {
                     PAN number
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.pan_no || '-'}
+                    {props.data.pan_no || '-'}
                   </Text>
                 </Stack>
               </Stack>
@@ -210,7 +210,7 @@ export default function SingleSupplierView(props: any) {
                     Place of supply
                   </Text>
                   <Text fontSize="sm" fontWeight={600}>
-                    {props.place_of_supply || '-'}
+                    {props.data.place_of_supply || '-'}
                   </Text>
                 </Stack>
               </Stack>

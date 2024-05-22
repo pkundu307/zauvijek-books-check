@@ -1,57 +1,115 @@
 import * as React from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { useDebounce } from 'use-debounce'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import Loading from '@renderer/components/loading'
-import { useAuthentication } from '@renderer/hooks/useAuthentication'
-import { getParties, searchParties } from '@renderer/services/party'
 import ListBankCashController from '../controller/list.bank_cash.controller'
+import { useToast } from '@chakra-ui/react'
 
 export default function ListBankCashModel() {
-  const { user } = useAuthentication()
+  /**
+   * ----------------------------------------------------------------------
+   *  LIBRARY HOOKS START
+   *
+   */
 
-  const [page, setPage] = React.useState(0)
-  const [limit, setLimit] = React.useState(10)
+  const toast = useToast()
+  const queryClient = useQueryClient()
+
+  /**
+   *
+   *  LIBRARY HOOKS END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  LOCAL STATES START
+   *
+   */
+
   const [search, setSearch] = React.useState('')
 
-  const { isLoading, data } = useQuery({
-    queryKey: ['getParties', user?.business_id, 'bankCash', page + 1, limit],
-    queryFn: () =>
-      getParties({
-        business_id: user?.business_id,
-        page: page + 1,
-        take: limit
-      }),
+  /**
+   *
+   *  LOCAL STATES END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  QUERY START
+   *
+   */
+
+  const getBankCashCheques = useQuery({
+    queryKey: ['getBankCashCheque', '1111'],
+    queryFn: () => [],
     refetchOnWindowFocus: false,
     retry: 1
   })
+  /**
+   *
+   *  QUERY END
+   * ----------------------------------------------------------------------
+   */
 
-  // Search
-  const debouncedFilter = useDebounce(search, 500)
-  const { data: searchData } = useQuery({
-    queryKey: ['searchBankCashs', user?.business_id, debouncedFilter[0]],
-    queryFn: () =>
-      searchParties({
-        business_id: user?.business_id,
-        party_name: debouncedFilter[0]
-      }),
-    enabled: !!search
+  /**
+   * ----------------------------------------------------------------------
+   *  MUTATION START
+   *
+   */
+
+  const deleteCreditNote = useMutation({
+    mutationFn: async ({ id }: { id: any }) => {
+      console.log(id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['getBankCashCheque', '1111']
+      })
+      toast({
+        description: 'Credit Note deleted successfully.',
+        status: 'success'
+      })
+    }
   })
 
-  if (isLoading) {
+  /**
+   *
+   *  MUTATION END
+   * ----------------------------------------------------------------------
+   */
+
+  /**
+   * ----------------------------------------------------------------------
+   *  HANDLER FUNCTIONS START
+   *
+   */
+
+  function handleDelete(value: string) {
+    deleteCreditNote?.mutate({ id: value })
+  }
+
+  function searchFilter(value: string) {
+    setSearch(value)
+  }
+
+  /**
+   *
+   *  HANDLER FUNCTIONS END
+   * ----------------------------------------------------------------------
+   */
+
+  if (getBankCashCheques?.isLoading) {
     return <Loading />
   }
 
   return (
     <ListBankCashController
-      data={data || []}
-      page={page}
-      limit={limit}
-      setPage={setPage}
-      setLimit={setLimit}
+      data={getBankCashCheques?.data || []}
       search={search}
-      setSearch={setSearch}
-      searchData={searchData}
+      searchFilter={searchFilter}
+      handleDelete={handleDelete}
     />
   )
 }

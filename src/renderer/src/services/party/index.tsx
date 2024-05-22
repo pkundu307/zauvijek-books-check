@@ -1,15 +1,13 @@
 import axios from 'axios'
 import { API_URL } from '..'
 import { cookies } from '@renderer/utils/cookie'
+const services = window.ZauvijekAPI.services
 
 export async function getParties(props: any) {
   try {
-    const { business_id, party_type, page, take } = props
-    const response = await axios.get(
-      `${API_URL}/party?business_id=${business_id}&party_type=${party_type}&page=${page}&take=${take}`,
-      { headers: { Authorization: `Bearer ${cookies.get('access_token')}` } }
-    )
-    return response?.data
+    const { business_id } = props
+    const response = await services.party.getParties({ business_id })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -28,12 +26,10 @@ export async function searchParties(props: any) {
   }
 }
 
-export async function getPartyById(props: any) {
+export async function getPartyById(id: string) {
   try {
-    const response = await axios.get(`${API_URL}/party/${props.id}`, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.party.getPartyById(id)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -41,10 +37,8 @@ export async function getPartyById(props: any) {
 
 export async function createParty(props: any) {
   try {
-    const response = await axios.post(`${API_URL}/party`, props, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.party.createParty({ ...props })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
@@ -52,21 +46,18 @@ export async function createParty(props: any) {
 
 export async function updateParty(props: any) {
   try {
-    const response = await axios.patch(`${API_URL}/party/${props.id}`, props, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const { id, obj } = props
+    const response = await services.party.updateParty(id, { ...obj })
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }
 }
 
-export async function deleteParty(props: { id: string }) {
+export async function deleteParty(id: string) {
   try {
-    const response = await axios.delete(`${API_URL}/party/${props.id}`, {
-      headers: { Authorization: `Bearer ${cookies.get('access_token')}` }
-    })
-    return response?.data
+    const response = await services.party.deleteParty(id)
+    return response
   } catch (error: any) {
     throw new Error(error.response.data.message)
   }

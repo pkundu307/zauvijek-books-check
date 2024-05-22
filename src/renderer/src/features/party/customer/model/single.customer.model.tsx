@@ -10,7 +10,7 @@ export default function SingleCustomerModel() {
 
   const { isLoading, data } = useQuery({
     queryKey: ['getCustomer', id],
-    queryFn: () => getPartyById({ id })
+    queryFn: () => getPartyById(id as string)
   })
 
   if (isLoading) {
