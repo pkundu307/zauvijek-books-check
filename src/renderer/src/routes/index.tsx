@@ -147,16 +147,16 @@ import {
 
 // import Loading from '@renderer/components/loading'
 // import { useAuthentication } from "@renderer/hooks/useAuthentication";
-import RequireAuthentication from "@renderer/contexts/authentication/authentication_required";
+// import RequireAuthentication from "@renderer/contexts/authentication/authentication_required";
 import { NoMatch } from "@renderer/pages/404";
 import PaymentStatus from "@renderer/pages/payment_status";
-import {
-  ForgotPasswordEmail,
-  ResetPasswordEmail,
-  SignInEmail,
-  SignUpEmail,
-} from "@renderer/features/authentication";
-import { Onboard } from "@renderer/pages/onboard";
+// import {
+//   ForgotPasswordEmail,
+//   ResetPasswordEmail,
+//   SignInEmail,
+//   SignUpEmail,
+// } from "@renderer/features/authentication";
+// import { Onboard } from "@renderer/pages/onboard";
 import { Account } from "@renderer/features/setting/account";
 import { Report } from "@renderer/features/report";
 
@@ -546,52 +546,22 @@ export default function AppRoutes() {
   // )
 
   return (
-    <>
-      {true ? (
-        <>
-          {true ? (
-            <Routes>
-              <Route path="/onboard" element={<Navigate replace to="/" />} />
-              <Route path="/sign-in" element={<Navigate replace to="/" />} />
-              <Route path="/sign-up" element={<Navigate replace to="/" />} />
+    <Routes>
+      <Route path="/onboard" element={<Navigate replace to="/" />} />
+      <Route path="/sign-in" element={<Navigate replace to="/" />} />
+      <Route path="/sign-up" element={<Navigate replace to="/" />} />
 
-              {/* Phone Pe payment status route */}
-              <Route path="/payment-status" element={<PaymentStatus />} />
+      {/* Phone Pe payment status route */}
+      <Route path="/payment-status" element={<PaymentStatus />} />
 
-              {privateRoutes.map((privateRoute) => (
-                <Route
-                  key={privateRoute.path}
-                  path={privateRoute.path}
-                  element={privateRoute.element}
-                />
-              ))}
-              <Route path="*" element={<NoMatch />} />
-            </Routes>
-          ) : (
-            <Routes>
-              <Route path="/" element={<Navigate replace to="/onboard" />} />
-              <Route
-                path="/onboard"
-                element={
-                  <RequireAuthentication>
-                    <Onboard />
-                  </RequireAuthentication>
-                }
-              />
-            </Routes>
-          )}
-        </>
-      ) : (
-        <Routes>
-          <Route path="/" element={<Navigate replace to="/sign-in" />} />
-          <Route path="/sign-in" element={<SignInEmail />} />
-          <Route path="/sign-up" element={<SignUpEmail />} />
-          <Route path="/forgot-password" element={<ForgotPasswordEmail />} />
-          <Route path="/reset-password" element={<ResetPasswordEmail />} />
-          {/* <Route path="/store" element={<Store />} /> */}
-          <Route path="*" element={<NoMatch />} />
-        </Routes>
-      )}
-    </>
+      {privateRoutes.map((privateRoute) => (
+        <Route
+          key={privateRoute.path}
+          path={privateRoute.path}
+          element={privateRoute.element}
+        />
+      ))}
+      <Route path="*" element={<NoMatch />} />
+    </Routes>
   );
 }
