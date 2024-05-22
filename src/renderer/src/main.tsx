@@ -1,24 +1,26 @@
-import '@renderer/assets/fonts/rupee-foradian/Rupee_Foradian.ttf'
-import '@renderer/assets/fonts/lato/Lato-Black.ttf'
-import '@renderer/assets/fonts/lato/Lato-Bold.ttf'
-import '@renderer/assets/fonts/lato/Lato-Light.ttf'
-import '@renderer/assets/fonts/lato/Lato-Regular.ttf'
-import '@renderer/assets/fonts/lato/Lato-Thin.ttf'
-import '@renderer/assets/css/index.css'
+import "@renderer/assets/fonts/rupee-foradian/Rupee_Foradian.ttf";
+import "@renderer/assets/fonts/lato/Lato-Black.ttf";
+import "@renderer/assets/fonts/lato/Lato-Bold.ttf";
+import "@renderer/assets/fonts/lato/Lato-Light.ttf";
+import "@renderer/assets/fonts/lato/Lato-Regular.ttf";
+import "@renderer/assets/fonts/lato/Lato-Thin.ttf";
+import "@renderer/assets/css/index.css";
 
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter as Router } from 'react-router-dom'
-import { ChakraProvider } from '@chakra-ui/react'
-import { CookiesProvider } from 'react-cookie'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { HashRouter } from "react-router-dom";
+import { ChakraProvider } from "@chakra-ui/react";
+import { CookiesProvider } from "react-cookie";
 
-import App from './App'
-import theme from '@renderer/styles/theme'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import App from "./App";
+import theme from "@renderer/styles/theme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 
 root.render(
   <React.StrictMode>
@@ -26,22 +28,22 @@ root.render(
       theme={theme}
       toastOptions={{
         defaultOptions: {
-          position: 'top',
+          position: "top",
           duration: 3000,
-          variant: 'subtle',
+          variant: "subtle",
           containerStyle: {
-            fontSize: 'sm'
-          }
-        }
+            fontSize: "sm",
+          },
+        },
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <Router>
-          <CookiesProvider defaultSetOptions={{ path: '/' }}>
+        <HashRouter>
+          <CookiesProvider defaultSetOptions={{ path: "/" }}>
             <App />
           </CookiesProvider>
-        </Router>
+        </HashRouter>
       </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>
-)
+);
