@@ -1,6 +1,11 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  //  Navigate,
+  Link,
+} from "react-router-dom";
 
-import Dashboard from "@renderer/features/dashboard/model/dashboard.model";
+// import Dashboard from "@renderer/features/dashboard/model/dashboard.model";
 
 // import {
 //   ListItem,
@@ -149,7 +154,7 @@ import Dashboard from "@renderer/features/dashboard/model/dashboard.model";
 // import { useAuthentication } from "@renderer/hooks/useAuthentication";
 // import RequireAuthentication from "@renderer/contexts/authentication/authentication_required";
 // import { NoMatch } from "@renderer/pages/404";
-import PaymentStatus from "@renderer/pages/payment_status";
+// import PaymentStatus from "@renderer/pages/payment_status";
 // import {
 //   ForgotPasswordEmail,
 //   ResetPasswordEmail,
@@ -547,13 +552,28 @@ export default function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/onboard" element={<Navigate replace to="/" />} />
+      {/* <Route path="/onboard" element={<Navigate replace to="/" />} />
       <Route path="/sign-in" element={<Navigate replace to="/" />} />
-      <Route path="/sign-up" element={<Navigate replace to="/" />} />
+      <Route path="/sign-up" element={<Navigate replace to="/" />} /> */}
 
       {/* Phone Pe payment status route */}
-      <Route path="/payment-status" element={<PaymentStatus />} />
-      <Route path="/" element={<Dashboard />} />
+      {/* <Route path="/payment-status" element={<PaymentStatus />} /> */}
+      <Route
+        path="/"
+        element={
+          <div>
+            First Page <Link to={"/next"}>Second Page</Link>
+          </div>
+        }
+      />
+      <Route
+        path="/next"
+        element={
+          <div>
+            Second Page <Link to={"/"}>First Page</Link>
+          </div>
+        }
+      />
 
       {/* {privateRoutes.map((privateRoute) => (
         <Route
