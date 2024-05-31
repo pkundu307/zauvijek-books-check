@@ -123,6 +123,13 @@ export class Party {
   billing_address: string
 
   @Column({
+    type:'varchar',
+    nullable:true,
+    name:'state_code'
+  })
+  state_code:string
+
+  @Column({
     type: 'varchar',
     nullable: true,
     name: 'shipping_address'

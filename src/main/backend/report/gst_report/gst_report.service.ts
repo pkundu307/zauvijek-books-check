@@ -7,6 +7,8 @@ export default class GstReportService extends Database {
     super()
     this.init()
     this.GstPurchaseWithHSN = this.GstPurchaseWithHSN.bind(this)
+    this.gstSaleWithHSN = this.gstSaleWithHSN.bind(this)
+    this.gstr1 = this.gstr1.bind(this)
   }
 
   async GstPurchaseWithHSN(): Promise<void> {
@@ -69,5 +71,49 @@ export default class GstReportService extends Database {
     })
 
     console.log(combinedData)
+  }
+  async gstr1(params: { start_date: Date; end_date: Date }):Promise<void>{
+    const { start_date, end_date } = params
+    start_date.setHours(0, 0, 0, 0)
+    end_date.setHours(23, 59, 59, 999)
+    const saleRepository = this.dataSource.getRepository(Sale)
+    const queryBuilder = saleRepository.createQueryBuilder('sale')
+
+    await queryBuilder
+      .orderBy('sale.created_at', 'DESC')
+      .where('sale.created_at >= :start_date', {
+        start_date: start_date
+      })
+      .andWhere('sale.created_at <= :end_date', {
+        end_date: end_date
+      })
+      .leftJoinAndSelect('sale.sale_item', 'sale_item')
+      .leftJoinAndSelect('sale.sale_additional_charge','sale_additional_charge')
+      .leftJoinAndSelect('sale.sale_payment_mode','sale_payment_mode')
+      .leftJoinAndSelect('sale.sale_tax','sale_tax')
+      .getMany()
+
+      const { entities } = await queryBuilder.getRawAndEntities()
+      console.log(entities,'e');
+      
+      const combinedData: any[] = entities.map((entity: any) => {
+        const saleItem = entity.sale_item[0] // Assuming sale_item is an array and we're interested in the first item
+        const saleTax = entity.sale_tax[0]
+        // Assuming sale_item is an array and we're interested in the first item
+        return {
+          SGST:saleTax?saleTax.sgst:null,
+          CGST:saleTax?saleTax.cgst:null,
+          IGST :saleTax?saleTax.igst:null,
+          CESS : saleTax?saleTax.cess :null,
+          total:saleTax?saleTax.total:null,
+          coustomer_name:entity.party_name,
+          state_name : entity.billing_address,
+          invoice_date:entity.created_at,
+          taxable_value : saleTax?saleTax.taxable_amount:null,
+          
+        }
+      })
+      console.log(combinedData)
+
   }
 }

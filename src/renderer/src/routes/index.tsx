@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "@renderer/features/dashboard/model/dashboard.model";
-
+const services=window.ZauvijekAPI.services
 import {
   ListItem,
   NewItem,
@@ -544,24 +544,23 @@ export default function AppRoutes() {
   //     </Routes>
   //   </>
   // )
+    return (
+      <Routes>
+        <Route path="/onboard" element={<Navigate replace to="/" />} />
+        <Route path="/sign-in" element={<Navigate replace to="/" />} />
+        <Route path="/sign-up" element={<Navigate replace to="/" />} />
 
-  return (
-    <Routes>
-      <Route path="/onboard" element={<Navigate replace to="/" />} />
-      <Route path="/sign-in" element={<Navigate replace to="/" />} />
-      <Route path="/sign-up" element={<Navigate replace to="/" />} />
+        {/* Phone Pe payment status route */}
+        <Route path="/payment-status" element={<PaymentStatus />} />
 
-      {/* Phone Pe payment status route */}
-      <Route path="/payment-status" element={<PaymentStatus />} />
-
-      {privateRoutes.map((privateRoute) => (
-        <Route
-          key={privateRoute.path}
-          path={privateRoute.path}
-          element={privateRoute.element}
-        />
-      ))}
-      <Route path="*" element={<NoMatch />} />
-    </Routes>
+        {privateRoutes.map((privateRoute) => (
+          <Route
+            key={privateRoute.path}
+            path={privateRoute.path}
+            element={privateRoute.element}
+          />
+        ))}
+        <Route path="*" element={<NoMatch />} />
+      </Routes>
   );
 }
