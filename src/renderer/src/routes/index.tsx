@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "@renderer/features/dashboard/model/dashboard.model";
-const services=window.ZauvijekAPI.services
+const services = window.ZauvijekAPI.services;
 import {
   ListItem,
   NewItem,
@@ -159,6 +159,7 @@ import PaymentStatus from "@renderer/pages/payment_status";
 // import { Onboard } from "@renderer/pages/onboard";
 import { Account } from "@renderer/features/setting/account";
 import { Report } from "@renderer/features/report";
+import { Button } from "@chakra-ui/react";
 
 const privateRoutes = [
   {
@@ -544,7 +545,18 @@ export default function AppRoutes() {
   //     </Routes>
   //   </>
   // )
-    return (
+  async function handleClick() {
+    const start_date = new Date("2024-05-1T00:00:00");
+    const end_date = new Date("2024-05-31T00:00:00");
+    start_date.setHours(0, 0, 0, 0);
+    end_date.setHours(23, 59, 59, 999);
+    const res = await services.gstReport.gstr1({ start_date, end_date });
+    console.log(res);
+  }
+  return (
+    <>
+      <br />
+      <Button onClick={handleClick}>click</Button>
       <Routes>
         <Route path="/onboard" element={<Navigate replace to="/" />} />
         <Route path="/sign-in" element={<Navigate replace to="/" />} />
@@ -562,5 +574,6 @@ export default function AppRoutes() {
         ))}
         <Route path="*" element={<NoMatch />} />
       </Routes>
+    </>
   );
 }

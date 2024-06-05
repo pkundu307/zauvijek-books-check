@@ -1,4 +1,5 @@
 import Database from '../../config/db'
+import { Party } from '../../party/party/party.entity'
 import { Purchase } from '../../purchase/purchase/purchase.entity'
 import { Sale } from '../../sale/sale/sale.entity'
 
@@ -77,43 +78,63 @@ export default class GstReportService extends Database {
     start_date.setHours(0, 0, 0, 0)
     end_date.setHours(23, 59, 59, 999)
     const saleRepository = this.dataSource.getRepository(Sale)
-    const queryBuilder = saleRepository.createQueryBuilder('sale')
+    const partyRepository = this.dataSource.getRepository(Party)
+    // const queryBuilder = saleRepository.createQueryBuilder('sale')
 
-    await queryBuilder
-      .orderBy('sale.created_at', 'DESC')
-      .where('sale.created_at >= :start_date', {
-        start_date: start_date
-      })
-      .andWhere('sale.created_at <= :end_date', {
-        end_date: end_date
-      })
-      .leftJoinAndSelect('sale.sale_item', 'sale_item')
-      .leftJoinAndSelect('sale.sale_additional_charge','sale_additional_charge')
-      .leftJoinAndSelect('sale.sale_payment_mode','sale_payment_mode')
-      .leftJoinAndSelect('sale.sale_tax','sale_tax')
-      .getMany()
+    const sales = await saleRepository.createQueryBuilder('sale')
+    .orderBy('sale.created_at', 'DESC')
+    .where('sale.created_at >= :start_date', { start_date })
+    .andWhere('sale.created_at <= :end_date', { end_date })
+    .leftJoinAndSelect('sale.sale_item', 'sale_item')
+    .leftJoinAndSelect('sale.sale_additional_charge', 'sale_additional_charge')
+    .leftJoinAndSelect('sale.sale_payment_mode', 'sale_payment_mode')
+    .leftJoinAndSelect('sale.sale_tax', 'sale_tax')
+    .getMany();
 
-      const { entities } = await queryBuilder.getRawAndEntities()
-      console.log(entities,'e');
+  // Extract unique party IDs from the sales data
+  const partyIds = Array.from(new Set(sales.map(sale => sale.party_id)));
+
+  // Fetch party details for the extracted party IDs
+  const parties = await partyRepository.findByIds(partyIds);
+  console.log(parties);
+  
+
+    // await queryBuilder
+    //   .orderBy('sale.created_at', 'DESC')
+    //   .where('sale.created_at >= :start_date', {
+    //     start_date: start_date
+    //   })
+    //   .andWhere('sale.created_at <= :end_date', {
+    //     end_date: end_date
+    //   })
+    //   .leftJoinAndSelect('sale.sale_item', 'sale_item')
+    //   .leftJoinAndSelect('sale.sale_additional_charge','sale_additional_charge')
+    //   .leftJoinAndSelect('sale.sale_payment_mode','sale_payment_mode')
+    //   .leftJoinAndSelect('sale.sale_tax','sale_tax')
+    //   .getMany()
+
       
-      const combinedData: any[] = entities.map((entity: any) => {
-        const saleItem = entity.sale_item[0] // Assuming sale_item is an array and we're interested in the first item
-        const saleTax = entity.sale_tax[0]
-        // Assuming sale_item is an array and we're interested in the first item
-        return {
-          SGST:saleTax?saleTax.sgst:null,
-          CGST:saleTax?saleTax.cgst:null,
-          IGST :saleTax?saleTax.igst:null,
-          CESS : saleTax?saleTax.cess :null,
-          total:saleTax?saleTax.total:null,
-          coustomer_name:entity.party_name,
-          state_name : entity.billing_address,
-          invoice_date:entity.created_at,
-          taxable_value : saleTax?saleTax.taxable_amount:null,
-          
-        }
-      })
-      console.log(combinedData)
+    //   const { entities } = await queryBuilder.getRawAndEntities()
+    //   console.log(entities,'e');
+      
+    //   const combinedData: any[] = entities.map((entity: any) => {
+    //     const saleItem = entity.sale_item[0] // Assuming sale_item is an array and we're interested in the first item
+    //     const saleTax = entity.sale_tax[0]
+    //     // Assuming sale_item is an array and we're interested in the first item
+    //     return {
+    //       SGST:saleTax?saleTax.sgst:null,
+    //       CGST:saleTax?saleTax.cgst:null,
+    //       IGST :saleTax?saleTax.igst:null,
+    //       CESS : saleTax?saleTax.cess :null,
+    //       total:saleTax?saleTax.total:null,
+    //       coustomer_name:entity.party_name,
+    //       state_name : entity.billing_address,
+    //       invoice_date:entity.created_at,
+    //       taxable_value : saleTax?saleTax.taxable_amount:null,
+    //       GSTIN : saleTax?saleTax.sale_tax_id:null
+        // }
+      // })
+      // console.log(combinedData)
 
   }
 }
