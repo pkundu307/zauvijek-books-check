@@ -9,6 +9,7 @@ const path = require('node:path')
 const iconPath = path.join(__dirname,"build","icon.png")
 
 log.transports.file.resolvePath=()=>path.join('C:\Users\pkund\OneDrive\Desktop\ecom\check','logs/main.log');
+log.log("Application version"+app.getVersion())
 log.info('hello,log')
 log.warn('some problem')
 /* add this before the enable function */
@@ -80,6 +81,7 @@ app.whenReady().then(() => {
 
   createWindow()
   autoUpdater.checkForUpdatesAndNotify()
+  
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -99,12 +101,3 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
-autoUpdater.on("update-available",()=>{
-  log.info('update-available');
-})
-autoUpdater.on("download-progress",()=>{
-  log.info('download-progress');
-})
-autoUpdater.on("update-downloaded",()=>{
-  log.info("update-downloaded");
-})

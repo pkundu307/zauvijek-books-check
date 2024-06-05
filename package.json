@@ -1,6 +1,6 @@
 {
   "name": "zauvijek-books-desktop",
-  "version": "1.5.0",
+  "version": "1.5.5",
   "description": "Zauvijek Books Desktop Application",
   "main": "./out/main/index.js",
   "author": "Zauvijek",
@@ -18,7 +18,15 @@
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux"
+    "build:linux": "electron-vite build && electron-builder --linux",
+    "package":"electron-builder -p always"
+  },
+  "build":{
+    "publish":[{
+      "provider":"github",
+      "owner":"pkundu307",
+      "repo":"zauvijek-books-check"
+    }]
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
